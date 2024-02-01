@@ -1,0 +1,333 @@
+<html><head>
+	<meta charset="utf-8">
+
+
+	<title>Brokerage calculator – Zerodha</title>
+
+
+
+	<meta name="description" content="Zerodha - India's biggest stock broker offering the lowest, cheapest brokerage rates for futures and options, commodity trading, equity and mutual funds">
+
+
+
+	<meta name="keywords" content="discount broker, discount brokerage, lowest brokerage commissions, lowest brokerage fees, indian discount brokerage, indian discount broker, cheap brokerage, discount brokerage bangalore, fixed brokerage bangalore, cheap trading, cheap commodity trading, trading terminal, futures trading, stock broker, fixed stock brokerage, cheapest brokerage, cheapest brokerage in india, online trading, online brokerage, cheap demat account, bangalore broker, commodities trading">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Open Graph -->
+<meta property="og:image" content="https://zerodha.com/static/images/landing.png">
+
+	<meta property="og:description" content="Comprehensive brokerage calculator to calculate how much brokerage, STT, tax etc. you have to pay on all your trades across NSE, BSE, MCX, MCX-SX">
+
+
+	<meta property="og:image:alt" content="Brokerage calculator">
+	<meta property="og:title" content="Brokerage calculator">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zerodha.com/brokerage-calculator/">
+
+<meta name="referrer" content="origin">
+
+	
+	<link rel="image_src" href="/static/images/landing.png">
+	<link rel="icon" type="image/png" href="/static/images/favicon.png">
+	<link href="https://fonts.googleapis.com/css?family=Inter:400,500" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://zerodha.com/static/css/bundle.min.css">
+
+	<script async="" src="//m.zerodha.com/js/"></script><script type="application/ld+json">
+	{
+		"@context" : "https://schema.org",
+		"@type" : "Organization",
+		"name" : "Zerodha",
+		"logo": "https://zerodha.com/static/images/logo.svg",
+		"description": "Zerodha - India's biggest stock broker offering the lowest, cheapest brokerage rates in the industry. We offer option trading, commodity brokerage, futures trading, brokerage, equity and mutual fund investing services in India",
+		"contactPoint" : [{
+			"@type" : "ContactPoint",
+			"telephone" : "+91 80 4040 2020",
+			"contactType" : "customer service"
+		}],
+		"url" : "https://zerodha.com/",
+		"sameAs" : [
+			"https://facebook.com/zerodha.social",
+			"https://twitter.com/zerodhaonline",
+			"https://youtube.com/user/zerodhaonline",
+			"https://linkedin.com/company/zerodha",
+			"https://instagram.com/zerodhaonline"
+		]
+	}
+	</script>
+</head>
+
+	<body class="">
+		
+  
+		<main class="content parent-content">
+			
+				
+					<main class="content brokerage-calculator">
+    <section class="calc-header container text-center">
+        <h1>Brokerage calculator</h1>
+    </section>
+    <section class="brokerage-calc-sections container border-bottom">
+        <div>
+            <div id="mytabs" class="tabs-container tinytabs">
+                <div class="section" id="equities" style="display: block;">
+                    
+                    <div class="row between">
+                        
+                        
+                        
+                        <div class="brokerage-columns column equity-calcs calc-wrapper" id="options-equity-calc">
+                            <h5 class="equity-head">F&amp;O - Options</h5>
+                            <div class="row calc-inputs around">
+                                <div class="four columns brokerage-calculator-input">
+                                    <label>BUY</label>
+                                    <input type="number" min="0" title="Buy Price" oninput="cal_options()" value="100" class="opt_bp options">
+                                </div>
+                                <div class="four columns brokerage-calculator-input">
+                                    <label>SELL</label>
+                                    <input type="number" min="0" title="Sell Price" oninput="cal_options()" value="110" class="opt_sp options">
+                                </div>
+                                <div class="four columns brokerage-calculator-input">
+                                    <label>QUANTITY</label>
+                                    <input type="number" min="0" title="Quantity" oninput="cal_options()" value="400" class="opt_qty options">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="six columns equity-radio text-center">
+                                    <input id="radio41" type="radio" name="listing-market4" onchange="cal_options()" value="NSE" class="opt_nse" checked="">
+                                    <label for="radio41">NSE</label>
+                                </div>
+                                <div class="six columns equity-radio text-center">
+                                    <input id="radio42" type="radio" name="listing-market4" onchange="cal_options()" value="BSE" class="opt_bse_option">
+                                    <label for="radio42">BSE</label>
+                                </div>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Turnover</label>
+                                <span class="five columns" id="opt_turn">49527</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Brokerage</label>
+                                <span class="five columns" id="opt_brokerage">40</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">STT total</label>
+                                <span class="five columns" id="opt_stt">16</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Exchange txn charge</label>
+                                <span class="five columns" id="opt_etc">25.01</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Clearing charge</label>
+                                <span class="five columns" id="opt_cc">0</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">GST</label>
+                                <span class="five columns" id="opt_st">11.71</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">SEBI charges</label>
+                                <span class="five columns" id="sebi_opt">0.05</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Stamp duty</label>
+                                <span class="five columns" id="stamp_duty_opt">1</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Total tax and charges</label>
+                                <span class="five columns" id="opt_total">93.77</span>
+                            </div>
+                            <div class="row valuation-block equity-list">
+                                <label class="seven columns">Points to breakeven</label>
+                                <span class="five columns" id="opt_breakeven">0.52</span>
+                            </div>
+                            <div class="row net-profit" id="opt_profit">
+                                <label class="six columns">Net P&amp;L</label>
+                                <span class="six columns profit pos" id="opt_pnl">329.23</span>
+                            </div>
+                            <div class="ecn_add text-center">
+                                <button id="opt_ecn">+ Contract note</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </section>
+    
+    
+    
+    <div id="contract_note" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">×</span>
+            </div>
+            <div class="modal-body">
+                <h4 class="ecn_head text-center">Sample contract note</h4>
+                <div class="equity_table">
+                    <h5>Equity &amp; Currency</h5>
+                    <table id="equity_ecn_table">
+                        <thead>
+                            <tr><th class="contract_index">#</th>
+                            <th>Exchange</th>
+                            <th></th>
+                            <th class="contract-number">Buy Price</th>
+                            <th class="contract-number">Sell Price</th>
+                            <th class="contract-number">Qty</th>
+                            <th class="contract-number">Gross profit</th>
+                        </tr></thead>
+                        <tbody class="intra_ecn">
+                        </tbody>
+                    </table>
+                    <div class="row contract-totals">
+                        <div class="four columns text-center">
+                            <span class="text-grey">Total gross profit</span>
+                            <p id="ecn_total_gross"></p>
+                        </div>
+                        <div class="four columns text-center">
+                            <span class="text-grey">Total charges</span>
+                            <p id="ecn_bottom_charges"></p>
+                        </div>
+                        <div class="four columns text-center">
+                            <span class="text-grey">Net P&amp;L</span>
+                            <p id="ecn_bottom_profit"></p>
+                        </div>
+                    </div>
+                    <h6 class="contract-breakdown-head">Charges breakdown</h6>
+                    <div class="row equity_charge_tables">
+                        <div class="three columns text-right">
+                            <p class="text-grey">
+                                Brokerage <span class="ecn_charge_brokerage"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                STT <span class="ecn_charge_stt"></span>
+                            </p>
+                        </div>
+                        <div class="four columns text-right">
+                            <p class="text-grey">
+                                Exchange txn charge <span class="ecn_charge_etc"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                Clearing charge <span class="ecn_charge_cc"></span>
+                            </p>
+                        </div>
+                        <div class="three columns text-right">
+                            <p class="text-grey">
+                                Stamp duty <span class="equity_stamp"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                SEBI charges <span class="ecn_charge_sebi"></span>
+                            </p>
+                        </div>
+                        <div class="two columns text-right">
+                            <p class="text-grey">
+                                DP <span class="ecn_charge_dp"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                GST <span class="ecn_charge_stax"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="commodity_contract_note" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">×</span>
+            </div>
+            <div class="modal-body">
+                <h4 class="ecn_head text-center">Sample contract note</h4>
+                <div class="equity_table">
+                    <h5>Commodity</h5>
+                    <table id="comm_ecn_table">
+                        <thead>
+                            <tr><th class="contract_index">#</th>
+                            <th></th>
+                            <th class="contract-number">Buy Price</th>
+                            <th class="contract-number">Sell Price</th>
+                            <th class="contract-number">Qty</th>
+                            <th class="contract-number">Profit</th>
+                        </tr></thead>
+                        <tbody class="comm_ecn">
+                        </tbody>
+                    </table>
+                    <div class="row contract-totals">
+                        <div class="four columns text-center">
+                            <span class="text-grey">Total gross profit</span>
+                            <p id="comm_ecn_total_gross"></p>
+                        </div>
+                        <div class="four columns text-center">
+                            <span class="text-grey">Total charges</span>
+                            <p id="comm_ecn_bottom_charges"></p>
+                        </div>
+                        <div class="four columns text-center">
+                            <span class="text-grey">Net P&amp;L</span>
+                            <p id="comm_ecn_bottom_profit"></p>
+                        </div>
+                    </div>
+                    <h6 class="contract-breakdown-head">Charges breakdown</h6>
+                    <div class="row equity_charge_tables">
+                        <div class="three columns text-right">
+                            <p class="text-grey">
+                                Brokerage <span class="comm_ecn_charge_brokerage"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                CTT <span class="comm_ecn_charge_stt"></span>
+                            </p>
+                        </div>
+                        <div class="four columns text-right">
+                            <p class="text-grey">
+                                Exchange txn charge <span class="comm_ecn_charge_etc"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                Clearing charge <span class="comm_ecn_charge_cc"></span>
+                            </p><br>
+                        </div>
+                        <div class="three columns text-right">
+                            <p class="text-grey">
+                                Stamp duty <span class="comm_stamp"></span>
+                            </p><br>
+                            <p class="text-grey">
+                                SEBI charges <span class="comm_ecn_charge_sebi"></span>
+                            </p>
+                        </div>
+                        <div class="two columns">
+                            <p class="text-grey">
+                                GST <span class="comm_ecn_charge_stax"></span>
+                            </p><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+				
+			
+		</main>
+		<!-- scripts -->
+
+<!-- Page specific scripts -->
+
+    <script type="text/javascript" src="https://zerodha.com/static/js/brokerage.js"></script>
+
+
+<noscript><p><img src="//matomo.zerodha.net/matomo.php?idsite=3&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+
+
+
+
+	
+
+</body></html>
