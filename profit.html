@@ -1,92 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Share Trading Calculator</title>
   <!-- Materialize CSS CDN -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    .pnl-profit {
-      color: #00bfae;
-      font-weight: bold;
-    }
-    .pnl-loss {
-      color: #e53935;
-      font-weight: bold;
-    }
+    .pnl-profit { color: #00bfae; font-weight: bold; }
+    .pnl-loss { color: #e53935; font-weight: bold; }
     .compact-card {
-      max-width: 900px;
-      margin: 24px auto;
-      padding: 1.1rem !important;
-      border-radius: 16px;
+      max-width: 900px; margin: 24px auto;
+      padding: 1.1rem !important; border-radius: 16px;
       box-shadow: 0 3px 18px 0 #00bfae33;
     }
     .vibrant-header {
-      color: #fff !important;
-      background: linear-gradient(90deg,#00bfae,#3d5afe);
-      padding: 12px 0 10px 0;
-      border-radius: 10px 10px 0 0;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
+      color: #fff !important; background: linear-gradient(90deg,#00bfae,#3d5afe);
+      padding: 12px 0 10px 0; border-radius: 10px 10px 0 0;
+      letter-spacing: 0.5px; margin-bottom: 12px;
     }
-    .vibrant-label {
-      color: #3d5afe !important;
+    .vibrant-label { color: #3d5afe !important; font-weight: 500; }
+    .flex-inputs-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+    }
+    .flex-inputs-row .input-field {
+      margin-bottom: 0; flex: 1 1 150px; min-width: 120px;
+    }
+    /* Horizontal layout for Next BUY Price card */
+    .next-buy-zone {
+      margin: 10px 0 18px 0;
+      background: #dbf9fc;
+      border-left: 5px solid #00bfae;
+      border-radius: 7px;
+      padding: 12px 18px 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 1.13rem;
+      font-weight: bold;
+      color: #064e3b;
+      box-shadow: 0 2px 12px 0 #00bfae22;
+      flex-wrap: wrap;
+      min-height: 42px;
+    }
+    .next-buy-label {
+      flex: 1 0 170px;
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .next-buy-value {
+      color: #00344d;
+      font-size: 1.18em;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+    .atr-inline-input {
+      flex: 0 0 92px;
+      max-width: 92px;
+      margin: 0;
+      padding: 0 2px;
+      min-width: 80px;
+    }
+    .atr-inline-input input {
+      font-size: 1rem;
+      padding: 4px 8px;
+      height: 32px;
+      text-align: center;
+    }
+    .atr-label {
+      font-size:0.94em; color:#555; margin-bottom:0;
       font-weight: 500;
     }
-    .input-field input[type="number"]:focus {
-      border-bottom: 2px solid #00bfae !important;
-      box-shadow: 0 1px 0 0 #00bfae !important;
-    }
-    .collection-item {
-      font-size: 1rem;
-    }
-    .vibrant-section {
-      background: #e3f2fd;
-      border-radius: 6px;
-      padding: 10px;
-    }
-    .highlight-current {
-      background: #fffbe0 !important;
-      border: 2px solid #ffd600 !important;
-      border-radius: 8px;
-      padding: 12px 8px 5px 8px;
-      box-shadow: 0 2px 12px 0 #ffe08244;
-      margin-bottom: 10px;
-    }
-    .btn-vibrant {
-      background-color: #00bfae !important;
-      color: #fff;
-      border-radius: 20px;
-      margin-top: 4px;
-    }
+    .collection-item { font-size: 1rem; }
+    .vibrant-section { background: #e3f2fd; border-radius: 6px; padding: 10px; }
     body, html { min-height: 100vh; }
     body.bg-red { background-color: #e53935 !important; transition: background 0.4s; }
     .card-glow-green { background-color: #bbf7d0 !important; transition: background 0.3s; }
-
-    .main-flex {
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-    }
-    .inputs-zone {
-      flex: 1 1 340px;
-      min-width: 280px;
-    }
+    .main-flex { display: flex; gap: 24px; align-items: flex-start; }
+    .inputs-zone { flex: 1 1 340px; min-width: 280px; }
     .results-zone {
-      flex: 0 1 330px;
-      min-width: 250px;
-      max-width: 350px;
-      margin-top: 0;
-      background: #f4faff;
-      border-radius: 12px;
-      box-shadow: 0 3px 16px 0 #90caf955;
-      padding: 18px 12px 12px 12px;
-      transition: box-shadow 0.2s;
+      flex: 0 1 330px; min-width: 250px; max-width: 350px; margin-top: 0;
+      background: #f4faff; border-radius: 12px; box-shadow: 0 3px 16px 0 #90caf955;
+      padding: 18px 12px 12px 12px; transition: box-shadow 0.2s;
     }
     @media (max-width: 900px) {
       .main-flex { flex-direction: column; }
       .results-zone { margin-top: 18px; }
+      .flex-inputs-row { flex-direction: column; gap: 4px; }
+      .next-buy-zone { flex-direction: column; gap:8px;}
+      .next-buy-label{margin-bottom:5px;}
     }
     @media (max-width: 500px) {
       .compact-card { max-width: 99vw; }
@@ -102,109 +110,200 @@
       <div class="main-flex">
         <!-- Left: Inputs & Trades -->
         <div class="inputs-zone">
-          <div class="input-field">
-            <input id="tradePrice" type="number" step="0.01" placeholder="Buy: Price & Enter (20 qty)">
-            <label for="tradePrice" class="vibrant-label">Buy Price (Enter 20 qty)</label>
-          </div>
-          <div id="tradeList" class="vibrant-section"></div>
-          <div class="highlight-current">
-            <div class="input-field" style="margin-bottom:0;">
-              <input id="currentPrice" type="number" step="0.01" placeholder="Current Price">
+          <!-- Buy + Current Price (horizontal) row -->
+          <div class="flex-inputs-row">
+            <div class="input-field">
+              <input
+                id="tradePrice"
+                type="number"
+                step="0.01"
+                placeholder="Buy: Price & Enter (20 qty)"
+              />
+              <label for="tradePrice" class="vibrant-label">Buy Price (Enter 20 qty)</label>
+            </div>
+            <div class="input-field">
+              <input
+                id="currentPrice"
+                type="number"
+                step="0.01"
+                placeholder="Current Price"
+              />
               <label for="currentPrice" class="vibrant-label">Current Price</label>
             </div>
           </div>
+
+          <!-- Next BUY Price and ATR side-by-side inside the card -->
+          <div id="nextBuyBox" class="next-buy-zone" style="display:none;">
+            <!-- Next Buy Output Label -->
+            <div class="next-buy-label">
+              Next BUY Price:
+              <span class="next-buy-value" id="nextBuyValue">–</span>
+              <span style="font-size:0.97em;color:#888;" id="nextBuyCalc"></span>
+            </div>
+            <!-- ATR Input -->
+            <div class="atr-inline-input input-field" style="margin-bottom:0;">
+              <input
+                id="atrValue"
+                type="number"
+                step="0.01"
+                placeholder="ATR"
+                value="20"
+                min="0"
+              />
+              <label for="atrValue" class="vibrant-label atr-label">ATR</label>
+            </div>
+          </div>
+
+          <div id="tradeList" class="vibrant-section"></div>
+
           <div class="input-field">
-            <input id="sellPrice" type="number" step="0.01" placeholder="Sell: Price & Enter (20 qty)">
+            <input
+              id="sellPrice"
+              type="number"
+              step="0.01"
+              placeholder="Sell: Price & Enter (20 qty)"
+            />
             <label for="sellPrice" class="vibrant-label">Sell Price (Enter 20 qty)</label>
           </div>
+
           <div id="sellList" class="vibrant-section"></div>
         </div>
+
         <!-- Right: Results -->
         <div class="results-zone">
-          <h6 class="vibrant-label" style="margin-bottom:12px;">Results:</h6>
-          <ul class="collection" style="border-radius:8px;">
+          <h6 class="vibrant-label" style="margin-bottom: 12px;">Results:</h6>
+          <ul class="collection" style="border-radius: 8px;">
             <li class="collection-item">
-              Total Qty Held: <span id="totalQty" style="font-weight:bold;">0</span>
+              Total Qty Held: <span id="totalQty" style="font-weight: bold">0</span>
             </li>
             <li class="collection-item">
               Average Buy Price:
-              <span style="color:#00bfae;font-weight:bold;font-size:1.2em;">₹<span id="avgPrice">0.00</span></span>
+              <span style="color: #00bfae; font-weight: bold; font-size: 1.2em"
+                >₹<span id="avgPrice">0.00</span></span
+              >
             </li>
             <li class="collection-item">
               Average Sell Price:
-              <span style="color:#3d5afe;font-weight:bold;">₹<span id="avgSellPrice">0.00</span></span>
+              <span style="color: #3d5afe; font-weight: bold"
+                >₹<span id="avgSellPrice">0.00</span></span
+              >
             </li>
             <li class="collection-item">
-              Total Bought: <span id="boughtQty" style="font-weight:bold;">0</span>
+              Total Bought: <span id="boughtQty" style="font-weight: bold">0</span>
             </li>
             <li class="collection-item">
-              Total Sold: <span id="soldQty" style="font-weight:bold;">0</span>
+              Total Sold: <span id="soldQty" style="font-weight: bold">0</span>
             </li>
-            <li class="collection-item" id="unrealizedPnlRow" style="display:none;">
+            <li
+              class="collection-item"
+              id="unrealizedPnlRow"
+              style="display: none"
+            >
               <span id="unrealizedPnlLabel">Unrealized PnL:</span>
-              ₹<span id="unrealizedPnl" style="font-size:1.2em;font-weight:bold;">0.00</span>
+              ₹<span
+                id="unrealizedPnl"
+                style="font-size: 1.2em; font-weight: bold"
+                >0.00</span
+              >
             </li>
             <li class="collection-item">
               <span id="realizedPnlLabel">Realized PnL:</span>
-              ₹<span id="realizedPnl" style="font-size:1.2em;font-weight:bold;">0.00</span>
+              ₹<span
+                id="realizedPnl"
+                style="font-size: 1.2em; font-weight: bold"
+                >0.00</span
+              >
             </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Materialize JS CDN and Vanilla JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
     let buys = [];
     let sells = [];
     let realizedPnl = 0;
 
-    document.getElementById('tradePrice').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
+    function updateNextBuyBox() {
+      const atrInput = document.getElementById("atrValue");
+      const atr = parseFloat(atrInput.value);
+      let lastBuy = buys.length ? buys[buys.length - 1].price : null;
+      const nextBuyBox = document.getElementById("nextBuyBox");
+      const nextBuyValue = document.getElementById("nextBuyValue");
+      const nextBuyCalc = document.getElementById("nextBuyCalc");
+      if (!isNaN(atr) && atr > 0 && lastBuy != null) {
+        let nextBuy = lastBuy - 2 * atr;
+        nextBuyValue.textContent = "₹" + nextBuy.toFixed(2);
+        nextBuyCalc.textContent = `(last buy ₹${lastBuy.toFixed(2)} − 2 × ATR ₹${atr.toFixed(2)})`;
+        nextBuyBox.style.display = "";
+      } else {
+        nextBuyBox.style.display = "none";
+      }
+    }
+
+    document.getElementById("tradePrice").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
         let price = parseFloat(this.value);
         if (!isNaN(price) && price > 0) {
           buys.push({ price: price, qty: 20 });
-          this.value = '';
+          this.value = "";
           updateTrades();
           updateResults();
+          updateNextBuyBox();
         }
       }
     });
 
-    document.getElementById('sellPrice').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
+    document.getElementById("atrValue").addEventListener("input", updateNextBuyBox);
+
+    function updateTrades() {
+      let tradeList = document.getElementById("tradeList");
+      if (buys.length === 0) {
+        tradeList.innerHTML = "";
+        updateNextBuyBox();
+        return;
+      }
+      tradeList.innerHTML =
+        '<h6 class="vibrant-label" style="margin:0;">Bought:</h6>' +
+        buys
+          .map(
+            (trade, i) =>
+              `<div style="color:#00bfae;">Buy ${i + 1}: ₹${trade.price} x ${trade.qty}</div>`
+          )
+          .join("");
+      updateNextBuyBox();
+    }
+
+    document.getElementById("sellPrice").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
         let price = parseFloat(this.value);
         if (!isNaN(price) && price > 0) {
           handleSell(price);
-          this.value = '';
+          this.value = "";
           updateSells();
           updateResults();
+          updateNextBuyBox();
         }
       }
     });
 
-    document.getElementById('currentPrice').addEventListener('input', updateResults);
-
-    function updateTrades() {
-      let tradeList = document.getElementById('tradeList');
-      if (buys.length === 0) { tradeList.innerHTML = ''; return; }
-      tradeList.innerHTML =
-        '<h6 class="vibrant-label" style="margin:0;">Bought:</h6>' +
-        buys.map((trade, i) =>
-          `<div style="color:#00bfae;">Buy ${i + 1}: ₹${trade.price} x ${trade.qty}</div>`
-        ).join('');
-    }
+    document.getElementById("currentPrice").addEventListener("input", updateResults);
 
     function updateSells() {
-      let sellList = document.getElementById('sellList');
-      if (sells.length === 0) { sellList.innerHTML = ''; return; }
+      let sellList = document.getElementById("sellList");
+      if (sells.length === 0) {
+        sellList.innerHTML = "";
+        return;
+      }
       sellList.innerHTML =
         '<h6 class="vibrant-label" style="margin:0;">Sold:</h6>' +
-        sells.map((sell, i) =>
-          `<div style="color:#e53935;">Sell ${i + 1}: ₹${sell.price} x ${sell.qty}</div>`
-        ).join('');
+        sells
+          .map(
+            (sell, i) =>
+              `<div style="color:#e53935;">Sell ${i + 1}: ₹${sell.price} x ${sell.qty}</div>`
+          )
+          .join("");
     }
 
     // FIFO sell logic
@@ -223,104 +322,109 @@
       }
       sells.push({ price: sellPrice, qty: soldQty });
       realizedPnl += realizedOnThisSell;
+      updateNextBuyBox();
     }
 
     function updateResults() {
       let totalQtyHeld = buys.reduce((sum, t) => sum + t.qty, 0);
       let totalQtyBought = buys.concat(sells).reduce((sum, t) => sum + t.qty, 0); // All bought
       let totalQtySold = sells.reduce((sum, t) => sum + t.qty, 0);
-      let totalBuyCost = buys.concat(sells).reduce((sum, t) =>
-        t.price ? sum + (t.price * t.qty) : sum, 0
+      let totalBuyCost = buys.concat(sells).reduce(
+        (sum, t) => (t.price ? sum + t.price * t.qty : sum),
+        0
       );
-      let totalHeldBuyCost = buys.reduce((sum, t) =>
-        t.price ? sum + (t.price * t.qty) : sum, 0
+      let totalHeldBuyCost = buys.reduce(
+        (sum, t) => (t.price ? sum + t.price * t.qty : sum),
+        0
       );
       let avgPrice = totalQtyHeld > 0 ? totalHeldBuyCost / totalQtyHeld : 0;
-      let totalSell = sells.reduce((sum, t) => sum + (t.price * t.qty), 0);
+      let totalSell = sells.reduce((sum, t) => sum + t.price * t.qty, 0);
       let avgSellPrice = totalQtySold > 0 ? totalSell / totalQtySold : 0;
 
-      let currentPriceInput = document.getElementById('currentPrice');
+      let currentPriceInput = document.getElementById("currentPrice");
       let currentPriceValueRaw = currentPriceInput.value;
       let currentPrice = parseFloat(currentPriceValueRaw);
-      let unrealizedPnlRow = document.getElementById('unrealizedPnlRow');
+      let unrealizedPnlRow = document.getElementById("unrealizedPnlRow");
 
-      // Only show and calculate Unrealized PnL if a valid current price is entered
+      // Only show/calc Unrealized PnL if a valid current price is entered
       if (currentPriceValueRaw !== "" && !isNaN(currentPrice)) {
-        let unrealizedPnl = totalQtyHeld > 0 ? (currentPrice - avgPrice) * totalQtyHeld : 0;
-        document.getElementById('unrealizedPnl').textContent = unrealizedPnl.toFixed(2);
-        let unrealizedPnlElem = document.getElementById('unrealizedPnl');
-        let unrealizedLabel = document.getElementById('unrealizedPnlLabel');
+        let unrealizedPnl =
+          totalQtyHeld > 0 ? (currentPrice - avgPrice) * totalQtyHeld : 0;
+        document.getElementById("unrealizedPnl").textContent =
+          unrealizedPnl.toFixed(2);
+        let unrealizedPnlElem = document.getElementById("unrealizedPnl");
+        let unrealizedLabel = document.getElementById("unrealizedPnlLabel");
         if (unrealizedPnl >= 0) {
-          unrealizedPnlElem.className = 'pnl-profit';
-          unrealizedLabel.className = 'pnl-profit';
+          unrealizedPnlElem.className = "pnl-profit";
+          unrealizedLabel.className = "pnl-profit";
         } else {
-          unrealizedPnlElem.className = 'pnl-loss';
-          unrealizedLabel.className = 'pnl-loss';
+          unrealizedPnlElem.className = "pnl-loss";
+          unrealizedLabel.className = "pnl-loss";
         }
         unrealizedPnlRow.style.display = "";
       } else {
-        document.getElementById('unrealizedPnl').textContent = "0.00";
-        document.getElementById('unrealizedPnl').className = "";
-        document.getElementById('unrealizedPnlLabel').className = "";
+        document.getElementById("unrealizedPnl").textContent = "0.00";
+        document.getElementById("unrealizedPnl").className = "";
+        document.getElementById("unrealizedPnlLabel").className = "";
         unrealizedPnlRow.style.display = "none";
       }
 
-      document.getElementById('totalQty').textContent = totalQtyHeld;
-      document.getElementById('boughtQty').textContent = totalQtyBought;
-      document.getElementById('soldQty').textContent = totalQtySold;
-      document.getElementById('avgPrice').textContent = avgPrice.toFixed(2);
-      document.getElementById('avgSellPrice').textContent = avgSellPrice.toFixed(2);
+      document.getElementById("totalQty").textContent = totalQtyHeld;
+      document.getElementById("boughtQty").textContent = totalQtyBought;
+      document.getElementById("soldQty").textContent = totalQtySold;
+      document.getElementById("avgPrice").textContent = avgPrice.toFixed(2);
+      document.getElementById("avgSellPrice").textContent = avgSellPrice.toFixed(2);
 
-      let realizedPnlElem = document.getElementById('realizedPnl');
-      let realizedLabel = document.getElementById('realizedPnlLabel');
+      let realizedPnlElem = document.getElementById("realizedPnl");
+      let realizedLabel = document.getElementById("realizedPnlLabel");
       realizedPnlElem.textContent = realizedPnl.toFixed(2);
 
       if (realizedPnl >= 0) {
-        realizedPnlElem.className = 'pnl-profit';
-        realizedLabel.className = 'pnl-profit';
+        realizedPnlElem.className = "pnl-profit";
+        realizedLabel.className = "pnl-profit";
       } else {
-        realizedPnlElem.className = 'pnl-loss';
-        realizedLabel.className = 'pnl-loss';
+        realizedPnlElem.className = "pnl-loss";
+        realizedLabel.className = "pnl-loss";
       }
     }
 
-    // Focus Buy box on page load
-    window.onload = function() {
-      document.getElementById('tradePrice').focus();
+    window.onload = function () {
+      document.getElementById("tradePrice").focus();
+      updateNextBuyBox();
     };
 
-    // Animate card background for ENTER on any main input
     function animateCardGreen() {
-      const card = document.querySelector('.compact-card');
-      card.classList.add('card-glow-green');
+      const card = document.querySelector(".compact-card");
+      card.classList.add("card-glow-green");
       setTimeout(() => {
-        card.classList.remove('card-glow-green');
+        card.classList.remove("card-glow-green");
       }, 1000);
     }
-    ['tradePrice', 'sellPrice', 'currentPrice'].forEach(id => {
-      document.getElementById(id).addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
+    ["tradePrice", "sellPrice", "currentPrice", "atrValue"].forEach((id) => {
+      document.getElementById(id).addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
           animateCardGreen();
         }
       });
     });
 
-    // ESC key resets page with background flash
-    window.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
         buys = [];
         sells = [];
         realizedPnl = 0;
-        document.getElementById('tradePrice').value = '';
-        document.getElementById('sellPrice').value = '';
-        document.getElementById('currentPrice').value = '';
+        document.getElementById("tradePrice").value = "";
+        document.getElementById("sellPrice").value = "";
+        document.getElementById("currentPrice").value = "";
+        document.getElementById("atrValue").value = "20";
         updateTrades();
         updateSells();
         updateResults();
-        document.getElementById('tradePrice').focus();
-        document.body.classList.add('bg-red');
+        updateNextBuyBox();
+        document.getElementById("tradePrice").focus();
+        document.body.classList.add("bg-red");
         setTimeout(() => {
-          document.body.classList.remove('bg-red');
+          document.body.classList.remove("bg-red");
         }, 2000);
       }
     });
