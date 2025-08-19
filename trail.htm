@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Intraday Trading Calculator</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+    .card {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 450px;
+      width: 100%;
+      z-index: 1;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1976d2;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border-color 0.2s;
+      font-size: 1rem;
+    }
+    input:focus {
+      border-color: #1976d2;
+    }
+    button {
+      width: 100%;
+      background: #1976d2;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #1565c0;
+    }
+    .results {
+      margin-top: 25px;
+      padding: 20px;
+      background: #e3f2fd;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+      font-weight: 700;
+      font-size: 1.4em;
+      color: #0d47a1;
+      white-space: pre-line;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px 40px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 20px 5px #2196f3;
+      color: #000;
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      position: relative;
+    }
+    .modal-card .highlight {
+      color: #d32f2f; /* bright red for trailing */
+      font-weight: 900;
+    }
+    .modal-card .highlight.mtm {
+      color: #2e7d32; /* bright green for MTM */
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="Intraday MTM Calculator">
+    <h2>Intraday MTM Calculator</h2>
+    <div class="input-group">
+      <label for="mtm">Latest MTM (₹)</label>
+      <input type="number" id="mtm" autocomplete="off" />
+    </div>
+    <div class="input-group">
+      <label for="lossBuffer">Loss Buffer (₹)</label>
+      <input type="number" id="lossBuffer" value="250" autocomplete="off" />
+    </div>
+    <div class="input-group">
+      <label for="qty">Quantity</label>
+      <input type="number" id="qty" value="80" autocomplete="off" />
+    </div>
+    <button id="saveBtn">SAVE</button>
+
+    <hr style="margin:20px 0;" />
+
+    <div class="input-group">
+      <label for="buyPrice">Buy Price (₹)</label>
+      <input type="number" id="buyPrice" autocomplete="off" />
+    </div>
+    <div class="input-group">
+      <label for="atr">ATR Value</label>
+      <input type="number" id="atr" autocomplete="off" />
+    </div>
+    <button id="calculateBtn">CALCULATE</button>
+
+    <div class="results" id="results" aria-live="polite" role="region"></div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalMessage">
+    <div class="modal-card" tabindex="-1">
+      <div id="modalMessage"></div>
+    </div>
+  </div>
+
+  <script>
+    function setCookie(name, value, days = 365) {
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === " ") c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const mtmInput = document.getElementById("mtm");
+      const lossBufferInput = document.getElementById("lossBuffer");
+      const qtyInput = document.getElementById("qty");
+      const resultsDiv = document.getElementById("results");
+      const modalOverlay = document.getElementById("modalOverlay");
+      const modalMessage = document.getElementById("modalMessage");
+
+      const defaultLossBuffer = 250;
+      const defaultQty = 80;
+
+      // Load values from cookie or fallback defaults
+      const saved = getCookie("tradeConfig");
+      if (saved) {
+        try {
+          const config = JSON.parse(saved);
+          mtmInput.value = config.mtm !== undefined ? config.mtm : "";
+          lossBufferInput.value = (config.lossBuffer !== undefined && config.lossBuffer !== "") ? config.lossBuffer : defaultLossBuffer;
+          qtyInput.value = (config.qty !== undefined && config.qty !== "") ? config.qty : defaultQty;
+        } catch (e) {
+          lossBufferInput.value = defaultLossBuffer;
+          qtyInput.value = defaultQty;
+        }
+      } else {
+        lossBufferInput.value = defaultLossBuffer;
+        qtyInput.value = defaultQty;
+      }
+
+      document.getElementById("saveBtn").addEventListener("click", () => {
+        const mtm = mtmInput.value;
+        const lossBuffer = lossBufferInput.value;
+        const qty = qtyInput.value;
+        const config = { mtm, lossBuffer, qty };
+        setCookie("tradeConfig", JSON.stringify(config), 365);
+        alert("Config saved!");
+      });
+
+      function calculateAndShow() {
+        const mtm = parseFloat(mtmInput.value) || 0;
+        const lossBuffer = parseFloat(lossBufferInput.value) || 0;
+        const qty = parseFloat(qtyInput.value) || 0;
+        const atr = parseFloat(document.getElementById("atr").value) || 0;
+
+        const nextMtm = mtm + (atr / 2) * qty;
+        const trailing = nextMtm - lossBuffer;
+
+        // Update inline results text (old style)
+        resultsDiv.innerText = `Trailing should be set to Rs.${trailing.toFixed(2)},\nwhen the MTM crosses Rs.${nextMtm.toFixed(2)}`;
+        resultsDiv.style.display = "block";
+
+        // Show modal with bright colored highlights
+        modalMessage.innerHTML =
+          `Trailing should be set to <span class="highlight">Rs.${trailing.toFixed(2)}</span>,<br>` +
+          `when the MTM crosses <span class="highlight mtm">Rs.${nextMtm.toFixed(2)}</span>`;
+        modalOverlay.style.display = "flex";
+        document.querySelector(".modal-card").focus();
+      }
+
+      document.getElementById("calculateBtn").addEventListener("click", calculateAndShow);
+
+      // Trigger calculate on ENTER key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          calculateAndShow();
+        }
+        if (e.key === "Escape") {
+          modalOverlay.style.display = "none";
+        }
+      });
+
+      // Allow clicking outside modal to close it (optional)
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) {
+          modalOverlay.style.display = "none";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
