@@ -137,8 +137,8 @@
       <input type="number" id="buyPrice" autocomplete="off" />
     </div>
     <div class="input-group">
-      <label for="atr">ATR Value</label>
-      <input type="number" id="atr" autocomplete="off" />
+      <label for="target">Target points</label>
+      <input type="number" id="target" autocomplete="off" />
     </div>
     <button id="calculateBtn">CALCULATE</button>
 
@@ -213,12 +213,12 @@
         const mtm = parseFloat(mtmInput.value) || 0;
         const lossBuffer = parseFloat(lossBufferInput.value) || 0;
         const qty = parseFloat(qtyInput.value) || 0;
-        const atr = parseFloat(document.getElementById("atr").value) || 0;
+        const target = parseFloat(document.getElementById("target").value) || 0;
 
-        const nextMtm = mtm + (atr / 2) * qty;
+        const nextMtm = mtm + target * qty;
         const trailing = nextMtm - lossBuffer;
 
-        // Update inline results text (old style)
+        // Update inline results text
         resultsDiv.innerText = `Trailing should be set to Rs.${trailing.toFixed(2)},\nwhen the MTM crosses Rs.${nextMtm.toFixed(2)}`;
         resultsDiv.style.display = "block";
 
@@ -243,7 +243,7 @@
         }
       });
 
-      // Allow clicking outside modal to close it (optional)
+      // Allow clicking outside modal to close it
       modalOverlay.addEventListener("click", (e) => {
         if (e.target === modalOverlay) {
           modalOverlay.style.display = "none";
