@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trading Psychology</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #495057;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      margin-top: 40px;
+      margin-bottom: 0;
+      color: #fff;
+      font-weight: 700;
+      font-size: 2.15em;
+      letter-spacing: 1px;
+    }
+    #container {
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .mui-card {
+      box-shadow: 0 8px 24px 0 rgba(22, 46, 77, 0.13), 0 1.5px 6px 0 rgba(22, 46, 77, 0.11);
+      border-radius: 22px;
+      background: #fff;
+      padding: 36px 24px;
+      width: 380px;
+      min-height: 175px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 24px;
+      border: 1.5px solid #e3eaf5;
+      transition: box-shadow 0.2s;
+    }
+    .mui-card .question {
+      font-weight: bold;
+      color: #1976d2;
+      font-size: 1.15em;
+      margin-bottom: 18px;
+      margin-top: 0;
+      text-align: center;
+      letter-spacing: .1px;
+    }
+    .mui-card .answer {
+      color: #495867;
+      font-size: 1.09em;
+      text-align: center;
+    }
+    .nav-btns {
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+    }
+    .nav-btn {
+      min-width: 52px;
+      min-height: 48px;
+      font-size: 1em;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.09s;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      position: relative;
+    }
+    .nav-btn:disabled {
+      background: #eeeeee;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+    .nav-btn:active:not(:disabled) {
+      transform: scale(0.92);
+    }
+    #counter {
+      margin-top:18px;
+      color:#ddd;
+      font-size:.96em;
+    }
+    @media (max-width: 500px) {
+      .mui-card {
+        width: 97vw;
+        padding: 18px 7px;
+        min-height: 120px;
+      }
+      h1 {
+        font-size: 1.11em;
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Trading Psychology</h1>
+  <div id="container">
+    <div class="mui-card" id="card"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" id="prev-btn" aria-label="Previous card">
+        <span class="material-icons">chevron_left</span>
+      </button>
+      <button class="nav-btn" id="next-btn" aria-label="Next card">
+        <span class="material-icons">chevron_right</span>
+      </button>
+    </div>
+    <p id="counter"></p>
+  </div>
+  <script>
+    const flashcards = [
+      { question: "How should you view trading?", answer: "As a business requiring a plan (strategy), risk management, and focus on consistency, not a hobby." },
+      { question: "What leads to long-term trading success?", answer: "Consistency through small wins over time, not luck or short-term gains." },
+      { question: "What is the cornerstone of good trading decisions?", answer: "Emotional control and managing your psychology." },
+      { question: "What is trading based on?", answer: "Probabilities, not certainties. You won't win every trade." },
+      { question: "What should a trader focus on during trades?", answer: "The process (executing the strategy), not the immediate outcome." },
+      { question: "What are the two biggest emotions to manage in trading?", answer: "Fear (of losing, missing out) and Greed (for more profit)." },
+      { question: "What is \"averaging down\" and why is it dangerous?", answer: "Adding more to a losing position. Danger: Throws good money after bad." },
+      { question: "What is a classic rookie mistake with trade duration?", answer: "Turning a day trade into a swing trade (holding a losing trade too long)." },
+      { question: "What causes traders to \"blow up\" their accounts?", answer: "Risking too much on a single trade (should never exceed 1-2% of account)." },
+      { question: "What is \"overtrading\" and its common drivers?", answer: "Excessive trading without clear setups, driven by boredom, greed, or wanting to recover losses." },
+      { question: "What is \"revenge trading\" and how to combat it?", answer: "Trading impulsively after a loss due to anger/frustration. Combat: Take a break." },
+      { question: "Why is \"trading for money\" a psychological hazard?", answer: "Leads to emotional decisions, chasing trades, and over-leveraging." },
+      { question: "What is FOMO in trading and how to avoid it?", answer: "Fear of Missing Out; chasing market moves. Avoid: Stick to strategy, be patient." },
+      { question: "Define \"resilience\" in trading.", answer: "The ability to bounce back from losses and setbacks by learning from them." },
+      { question: "What is a \"growth mindset\" in trading?", answer: "Viewing challenges and losses as opportunities to learn and improve." },
+      { question: "What is the first step to managing emotions in trading?", answer: "Emotional awareness - understanding how you feel after trades." },
+      { question: "What's the first step after a significant trading loss?", answer: "Take a break from trading to process emotions and clear your mind." },
+      { question: "How to rebuild confidence after a trading slump?", answer: "Reduce risk by trading smaller position sizes and focusing on high-probability setups." },
+      { question: "Why set daily profit targets?", answer: "To protect gains, avoid overtrading, and end the trading day positively." },
+      { question: "Why are clear trading rules essential?", answer: "Provide structure, prevent impulsive decisions, and remove emotion from trading." },
+      { question: "What is a \"tradebook\" and its purpose?", answer: "A record of analyzed past trades used to spot patterns and improve strategy." },
+      { question: "Why focus on \"a few stocks in play\"?", answer: "Allows deeper understanding of patterns, better decisions, and avoids information overload." },
+      { question: "Why master one trading strategy vs. trying many?", answer: "Leads to mastery, simplicity, consistency, and better results." },
+      { question: "Why is it important to \"define yourself as a trader\"?", answer: "To align your trading style with your personality and risk tolerance for long-term success." },
+      { question: "What does it mean to \"be realistic\" as a trader?", answer: "Set achievable goals, understand the learning curve, manage risk, avoid quick wealth expectations." },
+      { question: "What does \"follow no one\" mean in trading?", answer: "Trust your own research and strategy, don't blindly copy others or chase hype." },
+      { question: "Why is \"self-reflection\" crucial for traders?", answer: "Helps understand performance, manage emotions, and identify areas for improvement." },
+      { question: "What are key characteristics of well-defined trading goals?", answer: "Specific, Measurable, Achievable, Realistic, Time-bound (SMART)." },
+      { question: "Name three types of trading goals besides financial goals.", answer: "Process Goals, Risk Management Goals, Emotional Control Goals." },
+      { question: "How does lifestyle impact trading performance?", answer: "Directly affects focus, emotional control, and decision-making abilities." },
+      { question: "Why is adequate sleep (7-8 hours) important for traders?", answer: "Improves focus, decision-making, and emotional control." },
+      { question: "What dietary practices support better trading?", answer: "Hydration, brain-boosting foods (omega-3s), avoiding sugar crashes, balanced meals." },
+      { question: "What physical activity supports effective trading?", answer: "Regular exercise for mental clarity and physical well-being." },
+      { question: "Why take breaks during trading?", answer: "To refresh the mind, avoid mental fatigue, and maintain decision quality." },
+      { question: "How does the 80/20 rule apply to trading?", answer: "80% of profits come from 20% of trades; 80% of success depends on 20% of key actions." },
+      { question: "Who are the three main types of market players to understand?", answer: "Retail traders (emotional), Institutional traders (algorithmic/long-term), Market makers (liquidity providers)." },
+      { question: "What is the golden rule for position sizing?", answer: "Never risk more than 1-2% of your account on a single trade." },
+      { question: "What is non-negotiable in every trade?", answer: "Always knowing where you'll cut your losses (stop-loss level)." },
+      { question: "What are traits of a winning trading mindset?", answer: "Discipline, patience, emotional stability, positive yet realistic attitude." },
+      { question: "How should you view the trading journey?", answer: "As a marathon, not a sprint - focus on long-term consistency over quick gains." }
+    ];
+    let idx = 0;
+    const cardDiv = document.getElementById('card');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const counterP = document.getElementById('counter');
+
+    function renderCard() {
+      const fc = flashcards[idx];
+      cardDiv.innerHTML = `
+        <div class="question">${fc.question}</div>
+        <div class="answer">${fc.answer}</div>
+      `;
+      counterP.textContent = `Card ${idx + 1} of ${flashcards.length}`;
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === flashcards.length - 1;
+    }
+    prevBtn.onclick = () => {
+      if (idx > 0) { idx--; renderCard(); }
+    };
+    nextBtn.onclick = () => {
+      if (idx < flashcards.length - 1) { idx++; renderCard(); }
+    };
+    renderCard();
+  </script>
+</body>
+</html>
