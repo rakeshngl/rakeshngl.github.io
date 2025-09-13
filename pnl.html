@@ -80,6 +80,34 @@
       background: #fdeaea;
       border: 1.5px solid #edb3b3;
     }
+    .import-export-row {
+      margin-top: 14px;
+      margin-bottom: 6px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .import-label {
+      padding: 7px 16px;
+      color: #1565c0;
+      border-radius: 4px;
+      border: 1px solid #bbdefb;
+      background: #e3f2fd;
+      margin-right: 7px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.97em;
+      transition: background 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    .import-label:hover {
+      background: #bbdefb;
+      color: #0a47a1;
+    }
+    #importFile {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -113,13 +141,12 @@
         </button>
       </div>
     </div>
-    <!-- HARD RESET BUTTON -->
-    <div class="row">
-      <div class="col s12">
-        <button id="hardResetBtn" class="btn red darken-2 waves-effect waves-light full-width" style="margin-top: 10px;">
-          HARD RESET (Clear All Data)
-        </button>
-      </div>
+    <!-- IMPORT / EXPORT & HARD RESET BUTTONS -->
+    <div class="import-export-row">
+      <button id="exportBtn" class="btn teal accent-4">EXPORT</button>
+      <label for="importFile" class="import-label">IMPORT</label>
+      <input type="file" id="importFile" accept=".json,application/json" />
+      <button id="hardResetBtn" class="btn red darken-2">HARD RESET</button>
     </div>
     <div id="message"></div>
 
@@ -159,6 +186,8 @@
     const tableBody = document.getElementById("earningsTableBody");
     const ctxCumulative = document.getElementById("cumulativeChart").getContext("2d");
     const totalEarningsMonthBox = document.getElementById("totalEarningsMonth");
+    const exportBtn = document.getElementById("exportBtn");
+    const importFile = document.getElementById("importFile");
     let cumulativeChart;
 
     // Load saved data from Local Storage
@@ -180,8 +209,9 @@
     }
 
     // Show message
-    function showMessage(msg) {
+    function showMessage(msg, color="green") {
       messageDiv.textContent = msg;
+      messageDiv.style.color = color;
       setTimeout(() => {
         if (messageDiv.textContent === msg) messageDiv.textContent = "";
       }, 4000);
@@ -191,7 +221,7 @@
     saveCapitalBtn.addEventListener("click", () => {
       const val = parseFloat(capitalInput.value);
       if (isNaN(val) || val < 0) {
-        showMessage("Please enter a valid non-negative capital investment.");
+        showMessage("Please enter a valid non-negative capital investment.", "red");
         return;
       }
       data.capitalInvestment = val;
@@ -205,11 +235,11 @@
       const date = earningsDateInput.value;
       const val = parseFloat(dailyEarningsInput.value);
       if (!date) {
-        showMessage("Please select a valid date.");
+        showMessage("Please select a valid date.", "red");
         return;
       }
       if (isNaN(val)) {
-        showMessage("Please enter a valid number for daily earnings.");
+        showMessage("Please enter a valid number for daily earnings.", "red");
         return;
       }
       data.earnings[date] = val;
@@ -224,6 +254,57 @@
       dailyEarningsInput.value = "";
       updateTable();
       updateCumulativeChart();
+    });
+
+    // Export button - Download JSON of data
+    exportBtn.addEventListener("click", () => {
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const filename = "investment_earnings_" + (new Date().toISOString().replace(/:/g, "-").slice(0,16)) + ".json";
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+      }, 1000);
+      showMessage("Data exported as JSON file.");
+    });
+
+    // Import button - Select JSON and load
+    importFile.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (
+            typeof imported === "object"
+            && imported.hasOwnProperty("capitalInvestment")
+            && imported.hasOwnProperty("earnings")
+            && typeof imported.earnings === "object"
+          ) {
+            data = imported;
+            saveData();
+            capitalInput.value = data.capitalInvestment;
+            M.updateTextFields();
+            updateTable();
+            updateCumulativeChart();
+            showMessage("Import successful.");
+          } else {
+            showMessage("Invalid JSON file structure.", "red");
+          }
+        } catch {
+          showMessage("Failed to parse JSON file.", "red");
+        }
+      };
+      reader.readAsText(file);
+      // Reset so importFile can trigger again if same file selected next time
+      event.target.value = "";
     });
 
     // Hard reset
@@ -251,15 +332,15 @@
       const entries = Object.entries(data.earnings).sort((a, b) => b[0].localeCompare(a[0]));
       tableBody.innerHTML = entries
         .map(([date, val]) => {
-            let rowColor = '';
-            if (val > 0) rowColor = ' style="color:#258c25;font-weight:bold;"';
-            if (val < 0) rowColor = ' style="color:#c62828;font-weight:bold;"';
-            return `<tr>
-                      <td><span>${date}</span></td>
-                      <td${rowColor}><span>${val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></td>
-                    </tr>`;
-        })
-        .join("");
+          let rowColor = '';
+          if (val > 0) rowColor = ' style="color:#258c25;font-weight:bold;"';
+          if (val < 0) rowColor = ' style="color:#c62828;font-weight:bold;"';
+          return `<tr>
+                    <td><span>${date}</span></td>
+                    <td${rowColor}><span>${val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></td>
+                  </tr>`;
+      })
+      .join("");
       // If empty, add a placeholder row
       if (!entries.length) {
         tableBody.innerHTML = `<tr><td colspan="2" class="center-align">No data available.</td></tr>`;
