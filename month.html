@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Investor Statement Preparation</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: #eaf1f8;
+      margin: 0;
+      padding: 3em 2em;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      align-items: center;
+    }
+    #container {
+      background: #ffffff;
+      max-width: 520px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow:
+        0 4px 8px rgba(50, 50, 93, 0.11),
+        0 1px 3px rgba(0, 0, 0, 0.08);
+      padding: 2.5em 3em 3em;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2.5em;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #1a237e;
+      letter-spacing: 0.03em;
+    }
+    .mui-label {
+      font-size: 1.1rem;
+      margin-bottom: 0.5em;
+      font-weight: 600;
+      color: #2c387e;
+      display: block;
+    }
+    .mui-textfield {
+      margin-bottom: 1.6em;
+      width: 100%;
+      padding: 12px 14px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1.5px solid #c5cae9;
+      background: #f6f8fc;
+      font-weight: 500;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      color: #223366;
+    }
+    .mui-textfield:focus {
+      border-color: #3949ab;
+      box-shadow: 0 0 8px #9fa8dacc;
+      outline: none;
+      background: #ffffff;
+    }
+    .label-display {
+      font-size: 1.15rem;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(63, 81, 181, 0.15);
+      user-select: none;
+      min-width: 130px;
+      display: inline-block;
+      margin-bottom: 1.8em;
+      color: #223366;
+      background: #e8eaf6;
+      text-align: center;
+      letter-spacing: 0.01em;
+    }
+    #totalLabel {
+      font-size: 1.4rem;
+      font-weight: 700;
+      user-select: none;
+      padding: 16px 24px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow:
+        0 8px 22px rgba(25, 118, 210, 0.3),
+        inset 0 0 10px rgba(144, 202, 249, 0.6);
+      margin-top: 2.4em;
+      background: linear-gradient(to right, #e3f2fd, #bbdefb);
+      transition: color 0.3s, background 0.3s;
+    }
+    .positive {
+      color: #2e7d32; /* Green */
+      background: linear-gradient(to right, #dcedc8, #c5e1a5);
+      box-shadow:
+        0 8px 22px rgba(56, 142, 60, 0.45),
+        inset 0 0 15px rgba(165, 214, 167, 0.6);
+    }
+    .negative {
+      color: #c62828; /* Red */
+      background: linear-gradient(to right, #ffcdd2, #ef9a9a);
+      box-shadow:
+        0 8px 22px rgba(211, 47, 47, 0.45),
+        inset 0 0 15px rgba(239, 154, 154, 0.6);
+    }
+    .mui-button {
+      background: #3949ab;
+      color: white;
+      border: none;
+      outline: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 1.2em 0;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow:
+        0 5px 15px rgba(63, 81, 181, 0.4),
+        inset 0 -3px 12px rgba(40, 53, 147, 0.7);
+      transition: background-color 0.3s, box-shadow 0.3s;
+      user-select: none;
+      letter-spacing: 0.05em;
+    }
+    .mui-button:hover {
+      background-color: #283593;
+      box-shadow:
+        0 5px 20px rgba(48, 63, 159, 0.6),
+        inset 0 -4px 14px rgba(30, 42, 116, 0.8);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div id="container">
+    <h1>Investor statement preparation for <span id="monthTitle"></span></h1>
+    <form id="investorForm" autocomplete="off">
+      <label class="mui-label">Investor name</label>
+      <input class="mui-textfield" type="text" id="investorName" required />
+
+      <label class="mui-label">Investment start month & year</label>
+      <input class="mui-textfield" type="month" id="startMonthYear" min="2000-01" max="2099-12" />
+
+      <label class="mui-label">First capital</label>
+      <input class="mui-textfield" type="number" id="firstCapital" required min="0" />
+
+      <label class="mui-label">Capital for the last month</label>
+      <input class="mui-textfield" type="number" id="lastCapital" required min="0" />
+
+      <label class="mui-label">Total available amount now (<span id="todayDate"></span>)</label>
+      <input class="mui-textfield" type="number" id="totalAvailableNow" min="0" required />
+
+      <label class="mui-label">Last month's total profit</label>
+      <span class="label-display"><span id="lastProfitLabel" class="negative">Rs.0</span></span>
+
+      <label class="mui-label">Monthly software fees</label>
+      <span class="label-display" id="monthlySoftwareFee">Rs.471</span>
+
+      <label class="mui-label">Other fee</label>
+      <input class="mui-textfield" type="number" id="otherFee" value="0" min="0" />
+
+      <label class="mui-label">Payment from company to investor</label>
+      <input class="mui-textfield" type="number" id="paymentCompanyToInvestor" value="0" min="0" />
+
+      <div id="totalLabel">
+        Total to be paid by investor to company:
+        <span id="totalAmount" class="positive">Rs.0</span>
+      </div>
+
+      <button type="button" class="mui-button" onclick="createPDF()">Create PDF</button>
+    </form>
+  </div>
+  <script>
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let today = new Date();
+    let prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    document.getElementById("monthTitle").textContent = monthNames[prevMonth.getMonth()] + " " + prevMonth.getFullYear();
+
+    document.getElementById("todayDate").textContent =
+      today.getDate().toString().padStart(2, "0") +
+      "-" +
+      (today.getMonth() + 1).toString().padStart(2, "0") +
+      "-" +
+      today.getFullYear();
+
+    function updateProfitAndTotal() {
+      const lastCapital = Number(document.getElementById("lastCapital").value) || 0;
+      const totalAvailableNow = Number(document.getElementById("totalAvailableNow").value) || 0;
+      const otherFee = Number(document.getElementById("otherFee").value) || 0;
+      const paymentFromCompany = Number(document.getElementById("paymentCompanyToInvestor").value) || 0;
+
+      const profit = totalAvailableNow - lastCapital;
+
+      let profitElem = document.getElementById("lastProfitLabel");
+      profitElem.textContent = "Rs." + profit.toFixed(2);
+      profitElem.className = profit >= 0 ? "positive" : "negative";
+
+      const softwareFee = 471;
+
+      let totalToPay;
+      if (profit >= 0) {
+        totalToPay = profit / 2 + softwareFee + otherFee - paymentFromCompany;
+      } else {
+        totalToPay = softwareFee + otherFee - paymentFromCompany;
+      }
+
+      const totalAmountElem = document.getElementById("totalAmount");
+      const totalLabel = document.getElementById("totalLabel");
+
+      totalAmountElem.textContent = "Rs." + totalToPay.toFixed(2);
+
+      // Color logic changed: totalToPay > 0 => GREEN (positive), else RED
+      if (totalToPay > 0) {
+        totalAmountElem.className = "positive";
+        totalLabel.classList.remove("negative");
+        totalLabel.classList.add("positive");
+      } else {
+        totalAmountElem.className = "negative";
+        totalLabel.classList.remove("positive");
+        totalLabel.classList.add("negative");
+      }
+    }
+
+    document.getElementById("lastCapital").addEventListener("input", updateProfitAndTotal);
+    document.getElementById("totalAvailableNow").addEventListener("input", updateProfitAndTotal);
+    document.getElementById("otherFee").addEventListener("input", updateProfitAndTotal);
+    document.getElementById("paymentCompanyToInvestor").addEventListener("input", updateProfitAndTotal);
+
+    updateProfitAndTotal();
+
+    function createPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text(
+        "Investment management statement for " +
+          monthNames[prevMonth.getMonth()] +
+          " " +
+          prevMonth.getFullYear(),
+        14,
+        20
+      );
+
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      let y = 35;
+      const investorName = document.getElementById("investorName").value || "-";
+      doc.text("From: Rakesh [Investment Management Company]", 14, y);
+      y += 8;
+      doc.text("To: The Investor " + investorName, 14, y);
+      y += 15;
+
+      const startMonthYear = document.getElementById("startMonthYear").value || "-";
+      const firstCapital = Number(document.getElementById("firstCapital").value) || 0;
+      const lastCapital = Number(document.getElementById("lastCapital").value) || 0;
+      const totalAvailableNow = Number(document.getElementById("totalAvailableNow").value) || 0;
+      const otherFee = Number(document.getElementById("otherFee").value) || 0;
+      const paymentFromCompany = Number(document.getElementById("paymentCompanyToInvestor").value) || 0;
+      const profit = totalAvailableNow - lastCapital;
+
+      let totalToPay;
+      if (profit >= 0) {
+        totalToPay = profit / 2 + 471 + otherFee - paymentFromCompany;
+      } else {
+        totalToPay = 471 + otherFee - paymentFromCompany;
+      }
+
+      doc.text(`Investment start month & year: ${startMonthYear}`, 14, y);
+      y += 10;
+      doc.text(`First capital: Rs.${firstCapital.toFixed(2)}`, 14, y);
+      y += 10;
+      doc.text(`Capital for the last month: Rs.${lastCapital.toFixed(2)}`, 14, y);
+      y += 10;
+      doc.text(
+        `Total available amount now (${document.getElementById("todayDate").textContent}): Rs.${totalAvailableNow.toFixed(
+          2
+        )}`,
+        14,
+        y
+      );
+      y += 10;
+      doc.text(`Last month's total profit: Rs.${profit.toFixed(2)}`, 14, y);
+      y += 10;
+      doc.text("Monthly software fees: Rs.471.00", 14, y);
+      y += 10;
+      doc.text(`Other fee: Rs.${otherFee.toFixed(2)}`, 14, y);
+      y += 10;
+      doc.text(`Payment from company to investor: Rs.${paymentFromCompany.toFixed(2)}`, 14, y);
+      y += 10;
+      doc.setFont("helvetica", "bold");
+      doc.text(`Total to be paid by investor to company: Rs.${totalToPay.toFixed(2)}`, 14, y);
+      y += 10;
+
+      doc.save("InvestmentManagementStatement.pdf");
+    }
+  </script>
+</body>
+</html>
