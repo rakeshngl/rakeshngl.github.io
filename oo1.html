@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Loss Visualizer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/lux/bootstrap.min.css" rel="stylesheet" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background: #87ceeb;
+      min-height: 100vh;
+      transition: background 0.5s;
+    }
+    .bg-body-green {
+      background: linear-gradient(135deg, #2e7d32 80%, #00e676 100%) !important;
+    }
+    .bg-body-orange {
+      background: linear-gradient(135deg, #ffa726 80%, #ff9800 100%) !important;
+    }
+    .bg-body-red {
+      background: linear-gradient(135deg, #b71c1c 80%, #c62828 100%) !important;
+    }
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.19);
+      width: 100%;
+      max-width: 900px;
+    }
+    .card-body {
+      background: linear-gradient(145deg, #fff, #f8f9fa);
+      border-radius: 15px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
+    }
+    .big-label {
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 12px;
+      padding: 8px 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.3s;
+      min-height: 60px; /* Added for visibility */
+    }
+    .small-label {
+      font-size: 0.9rem;
+      color: #333;
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 2px 8px;
+      margin-left: 8px;
+    }
+    .form-label {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #FF8C00 !important; /* DarkOrange */
+      box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25) !important; /* Orange shadow */
+    }
+    .merged-loss-card {
+      background: black;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 12px;
+      padding: 8px 16px;
+      margin-top: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+    .bg-light-yellow {
+      background: #FFA500 !important; /* Bright Orange */
+      color: #6c6c07 !important;
+    }
+    .cards-container {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-3 mb-5">
+    <div class="cards-container">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-7" style="border-right: 1px solid #ccc; padding-right: 15px;">
+              <h3 class="text-center mb-3 text-danger">
+                <i class="bi bi-eye-fill"></i> Loss Visualizer
+              </h3>
+              <form id="calcForm" autocomplete="off">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label mb-0"><i class="bi bi-list-nested"></i> LOTS</label>
+                      <select class="form-select shadow-sm" id="lots" autofocus></select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label mb-0"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
+                      <input type="number" id="maxPoints" maxlength="3" class="form-control shadow-sm" placeholder="000" value="30" />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR"/>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy Price</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy" placeholder="Enter first buy price"/>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 1st Average Price</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg1" placeholder="Enter 1st average price"/>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price (optional)</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg2" placeholder="Enter 2nd average price"/>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div class="mt-4">
+
+              </div>
+            </div>
+            <div class="col-md-5">
+              <h3 class="text-center mb-3 text-primary">
+                <i class="bi bi-stack"></i> Results
+              </h3>
+              <div id="avgLabel" class="big-label mt-3 bg-light-yellow">
+                <i class="bi bi-bar-chart-fill"></i> Average: --
+              </div>
+              <div class="merged-loss-card">
+                <div id="possibleLossLabel">Possible Loss: ₹ --</div>
+                <div id="stopLossLabel">set STOP LOSS at: --</div>
+              </div>
+              <div id="takeProfitCard" class="big-label mt-3 bg-success text-white d-flex flex-column">
+                <div id="takeProfitLabel">Take Profit: --</div>
+                <div id="profitMtmLabel">Profit MTM: --</div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Populate LOTS dropdown
+    const lotsSelect = document.getElementById("lots");
+    for (let i = 1; i <= 50; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = i;
+      lotsSelect.appendChild(option);
+    }
+
+    function getValue(id) {
+      const val = document.getElementById(id).value.trim();
+      return val === "" ? null : parseFloat(val);
+    }
+
+    function calculate() {
+      const atr = getValue("atr");
+      const firstBuy = getValue("firstBuy");
+      const avg1 = getValue("avg1");
+      const avg2 = getValue("avg2");
+      const maxPoints = getValue("maxPoints");
+      const lots = parseInt(lotsSelect.value, 10);
+      const avgs = [firstBuy, avg1, avg2].filter(v => v !== null && !isNaN(v));
+      let avgElem = document.getElementById("avgLabel");
+      let avg = null;
+
+      // Average
+      if (avgs.length >= 2) {
+        avg = avgs.reduce((a, b) => a + b, 0) / avgs.length;
+        avgElem.innerHTML = `<i class="bi bi-bar-chart-fill"></i> Average: ${avg.toFixed(2)}`;
+      } else avgElem.innerHTML = `<i class="bi bi-bar-chart-fill"></i> Average: --`;
+      avgElem.className = "big-label mt-3 bg-light-yellow";
+
+      // STOP LOSS = average - 30
+      const stopLossLabel = document.getElementById("stopLossLabel");
+      if (avg !== null) {
+        stopLossLabel.textContent = `set Stop Loss at: ${(avg - 30).toFixed(2)}`;
+      } else if (firstBuy !== null) {
+        stopLossLabel.textContent = `set Stop Loss at: ${(firstBuy - 30).toFixed(2)}`;
+      } else {
+        stopLossLabel.textContent = "set Stop Loss at: --";
+      }
+
+      // Take Profit
+      const takeProfitLabel = document.getElementById("takeProfitLabel");
+      if (avg !== null && atr !== null) {
+        const takeProfit = avg + (atr / 3);
+        takeProfitLabel.textContent = `set Take Profit at: ${takeProfit.toFixed(2)}`;
+      } else {
+        takeProfitLabel.textContent = "set Take Profit at: --";
+      }
+
+      // Profit MTM calculation
+      const profitMtmLabel = document.getElementById("profitMtmLabel");
+      if (atr !== null && lots !== null) {
+        let multiplier = 0;
+        if (avg2 !== null && !isNaN(avg2)) multiplier = 3;
+        else if (avg1 !== null && !isNaN(avg1)) multiplier = 2;
+        else if (firstBuy !== null && !isNaN(firstBuy)) multiplier = 1;
+
+        if (multiplier > 0) {
+          const profitMtm = (atr / 3) * lots * 20 * multiplier;
+          profitMtmLabel.textContent = `set Profit MTM at: ₹ ${profitMtm.toFixed(2)}`;
+        } else {
+          profitMtmLabel.textContent = "set Profit MTM at: ₹ --";
+        }
+      } else {
+        profitMtmLabel.textContent = "set Profit MTM at: ₹ --";
+      }
+
+      // Possible Loss calculation (updated)
+      const possibleLossLabel = document.getElementById("possibleLossLabel");
+      if (maxPoints && lots) {
+        let multiplier = 0;
+        if (avg2 !== null && !isNaN(avg2)) multiplier = 3;
+        else if (avg1 !== null && !isNaN(avg1)) multiplier = 2;
+        else if (firstBuy !== null && !isNaN(firstBuy)) multiplier = 1;
+
+        if (multiplier > 0) {
+          const possibleLoss = lots * 20 * maxPoints * multiplier;
+          possibleLossLabel.textContent = `set Loss MTM at: ₹ ${possibleLoss.toFixed(2)}`;
+        } else {
+          possibleLossLabel.textContent = "set Loss MTM at: ₹ --";
+        }
+      } else {
+        possibleLossLabel.textContent = "Possible Loss: ₹ --";
+      }
+
+      // Hidden Price Difference calculation
+      const lastAvg = [avg2, avg1].find(v => v !== null && !isNaN(v));
+      let pdiff = null;
+      let pdiffColor = "";
+      if (avg !== null && lastAvg !== null) {
+        pdiff = avg - lastAvg;
+        if (Math.abs(pdiff) > 30) {
+          pdiffColor = "red";
+        } else {
+          pdiffColor = "green";
+        }
+      }
+
+      // Trading signal
+      let signalColor = "";
+      if (atr !== null && pdiff !== null) {
+        const signal = atr - pdiff;
+        if (signal < 0) {
+          signalColor = "red";
+        } else {
+          signalColor = "green";
+        }
+      } else {
+        signalColor = "";
+      }
+
+      // Background conditions
+      const body = document.body;
+      body.classList.remove("bg-body-green", "bg-body-orange", "bg-body-red");
+      if (pdiffColor === "green" && signalColor === "green") body.classList.add("bg-body-green");
+      else if (pdiffColor === "red" && signalColor === "red") body.classList.add("bg-body-red");
+      else if ((pdiffColor === "red" && signalColor === "green") || (pdiffColor === "green" && signalColor === "red"))
+        body.classList.add("bg-body-orange");
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        document.getElementById('atr').value = '';
+        document.getElementById('firstBuy').value = '';
+        document.getElementById('avg1').value = '';
+        document.getElementById('avg2').value = '';
+        document.getElementById('maxPoints').value = '30';
+        document.getElementById('lots').value = '1';
+        calculate();
+        document.getElementById('lots').focus();
+      }
+    });
+
+    ["atr", "firstBuy", "avg1", "avg2", "maxPoints"].forEach(id =>
+      document.getElementById(id).addEventListener("input", calculate)
+    );
+    lotsSelect.addEventListener("input", calculate);
+    window.onload = () => {
+      lotsSelect.value = "1";
+      calculate();
+    };
+  </script>
+</body>
+</html>
