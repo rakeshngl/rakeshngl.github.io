@@ -187,7 +187,7 @@
       let avg = null;
 
       // Average
-      if (avgs.length >= 2) {
+      if (avgs.length >= 1) {
         avg = avgs.reduce((a, b) => a + b, 0) / avgs.length;
         avgElem.innerHTML = `<i class="bi bi-bar-chart-fill"></i> Average: ${avg.toFixed(2)}`;
       } else avgElem.innerHTML = `<i class="bi bi-bar-chart-fill"></i> Average: --`;
@@ -207,7 +207,8 @@
       const takeProfitLabel = document.getElementById("takeProfitLabel");
       if (avg !== null && atr !== null) {
         const takeProfit = avg + (atr / 3);
-        takeProfitLabel.textContent = `Set Target point: ${takeProfit.toFixed(2)}`;
+        const atrDividedBy3 = atr / 3;
+        takeProfitLabel.textContent = `Set Target point: ${takeProfit.toFixed(2)} (${atrDividedBy3.toFixed(2)})`;
       } else {
         takeProfitLabel.textContent = "Set Target point: --";
       }
