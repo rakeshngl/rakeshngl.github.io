@@ -66,7 +66,7 @@
       box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25) !important; /* Orange shadow */
     }
     .merged-loss-card {
-      background: black;
+      background: red;
       color: white;
       font-size: 1.3rem; /* Reduced from 1.5rem */
       font-weight: bold;
@@ -143,13 +143,13 @@
               <div id="avgLabel" class="big-label mt-3 bg-light-yellow">
                 <i class="bi bi-bar-chart-fill"></i> Average: --
               </div>
+              <div id="takeProfitCard" class="big-label mt-3 bg-success text-white d-flex flex-column">
+                <div id="profitMtmLabel">MTM Profit at: --</div>
+                <div id="takeProfitLabel">Set Target point: --</div>
+              </div>
               <div class="merged-loss-card">
                 <div id="possibleLossLabel">Possible Loss: ₹ --</div>
-                <div id="stopLossLabel">set STOP LOSS at: --</div>
-              </div>
-              <div id="takeProfitCard" class="big-label mt-3 bg-success text-white d-flex flex-column">
-                <div id="takeProfitLabel">Take Profit: --</div>
-                <div id="profitMtmLabel">Profit MTM: --</div>
+                <div id="stopLossLabel">Set Stop Loss point: --</div>
               </div>
 
 
@@ -196,20 +196,20 @@
       // STOP LOSS = average - 30
       const stopLossLabel = document.getElementById("stopLossLabel");
       if (avg !== null) {
-        stopLossLabel.textContent = `Stop Loss at: ${(avg - 30).toFixed(2)}`;
+        stopLossLabel.textContent = `Set Stop Loss point: ${(avg - 30).toFixed(2)}`;
       } else if (firstBuy !== null) {
-        stopLossLabel.textContent = `Stop Loss at: ${(firstBuy - 30).toFixed(2)}`;
+        stopLossLabel.textContent = `Set Stop Loss point: ${(firstBuy - 30).toFixed(2)}`;
       } else {
-        stopLossLabel.textContent = "Stop Loss at: --";
+        stopLossLabel.textContent = "Set Stop Loss point: --";
       }
 
       // Take Profit
       const takeProfitLabel = document.getElementById("takeProfitLabel");
       if (avg !== null && atr !== null) {
         const takeProfit = avg + (atr / 3);
-        takeProfitLabel.textContent = `MTM Profit at: ${takeProfit.toFixed(2)}`;
+        takeProfitLabel.textContent = `Set Target point: ${takeProfit.toFixed(2)}`;
       } else {
-        takeProfitLabel.textContent = "MTM Profit at: --";
+        takeProfitLabel.textContent = "Set Target point: --";
       }
 
       // Profit MTM calculation
@@ -222,12 +222,12 @@
 
         if (multiplier > 0) {
           const profitMtm = (atr / 3) * lots * 20 * multiplier;
-          profitMtmLabel.textContent = `Take Profit at: ₹ ${profitMtm.toFixed(2)}`;
+          profitMtmLabel.textContent = `MTM Profit at: ₹ ${profitMtm.toFixed(2)}`;
         } else {
-          profitMtmLabel.textContent = "Take Profit at: ₹ --";
+          profitMtmLabel.textContent = "MTM Profit at: ₹ --";
         }
       } else {
-        profitMtmLabel.textContent = "Take Profit at: ₹ --";
+        profitMtmLabel.textContent = "MTM Profit at: ₹ --";
       }
 
       // Possible Loss calculation (updated)
