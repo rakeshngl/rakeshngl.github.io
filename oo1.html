@@ -87,6 +87,23 @@
   </style>
 </head>
 <body>
+  <!-- Modal -->
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #FF0000; color: white;">
+          <h5 class="modal-title" id="errorModalLabel">Input Error</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="font-size: 1.25rem; text-align: center; padding: 2rem;">
+          <!-- Error message goes here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="container mt-3 mb-5">
     <div class="cards-container">
       <div class="card shadow-lg">
@@ -107,13 +124,13 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label mb-0"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
-                      <input type="number" id="maxPoints" maxlength="3" class="form-control shadow-sm" placeholder="000" value="30" />
+                      <input type="number" id="maxPoints" maxlength="3" class="form-control shadow-sm" placeholder="000" value="30" max="30" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR"/>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR" min="12" max="40"/>
                     </div>
                     <div class="mb-3">
                       <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy Price</label>
@@ -155,11 +172,19 @@
 
             </div>
           </div>
+          <div class="row mt-4">
+            <div class="col-12">
+              <div id="fundsRequiredLabel" class="big-label bg-info text-white">
+                <i class="bi bi-wallet2"></i> Funds Required: ₹ --
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // Populate LOTS dropdown
     const lotsSelect = document.getElementById("lots");
@@ -249,6 +274,25 @@
         possibleLossLabel.textContent = "Possible Loss: ₹ --";
       }
 
+      // Funds Required Calculation
+      const fundsRequiredLabel = document.getElementById("fundsRequiredLabel");
+      let fundsRequired = 0;
+      if (lots && firstBuy !== null) {
+        if (avg1 !== null && avg2 !== null) {
+          fundsRequired = lots * 20 * (firstBuy + avg1 + avg2);
+        } else if (avg1 !== null) {
+          fundsRequired = lots * 20 * (firstBuy + avg1);
+        } else {
+          fundsRequired = lots * 20 * firstBuy;
+        }
+      }
+
+      if (fundsRequired > 0) {
+        fundsRequiredLabel.innerHTML = `<i class="bi bi-wallet2"></i> Funds Required: ₹ ${fundsRequired.toFixed(2)}`;
+      } else {
+        fundsRequiredLabel.innerHTML = `<i class="bi bi-wallet2"></i> Funds Required: ₹ --`;
+      }
+
       // Hidden Price Difference calculation
       const lastAvg = [avg2, avg1].find(v => v !== null && !isNaN(v));
       let pdiff = null;
@@ -301,6 +345,53 @@
       document.getElementById(id).addEventListener("input", calculate)
     );
     lotsSelect.addEventListener("input", calculate);
+
+    let fieldToFocus = null;
+
+    function showModal(message, elementToFocus) {
+      const modalEl = document.getElementById('errorModal');
+      const modalBody = modalEl.querySelector('.modal-body');
+      modalBody.textContent = message;
+      fieldToFocus = elementToFocus;
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
+
+    const errorModal = document.getElementById('errorModal');
+    if (errorModal) {
+      errorModal.addEventListener('hidden.bs.modal', function () {
+        if (fieldToFocus) {
+          fieldToFocus.focus();
+          fieldToFocus = null;
+        }
+      });
+    }
+
+    const atrInput = document.getElementById('atr');
+    atrInput.addEventListener('change', function(event) {
+        const value = parseFloat(this.value);
+        const min = parseFloat(this.min);
+        const max = parseFloat(this.max);
+
+        if (this.value && (value < min || value > max)) {
+            showModal(`ATR value must be between ${min} and ${max}.`, this);
+            this.value = 12;
+            calculate();
+        }
+    });
+
+    const maxPointsInput = document.getElementById('maxPoints');
+    maxPointsInput.addEventListener('change', function(event) {
+        const value = parseFloat(this.value);
+        const max = parseFloat(this.max); // Max is 30
+
+        if (this.value && value > max) {
+            showModal(`Max loss points value cannot exceed ${max}.`, this);
+            this.value = 30; // Reset to default of 30
+            calculate();
+        }
+    });
+
     window.onload = () => {
       lotsSelect.value = "1";
       calculate();
