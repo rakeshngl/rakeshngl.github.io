@@ -84,6 +84,9 @@
       display: flex;
       justify-content: center;
     }
+    .big-icon {
+      font-size: 2.5rem; /* Adjust size as needed */
+    }
   </style>
 </head>
 <body>
@@ -91,12 +94,12 @@
   <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF0000; color: white;">
-          <h5 class="modal-title" id="errorModalLabel">Input Error</h5>
+        <div class="modal-header" style="background-color: #FFC107; color: black;">
+          <h5 class="modal-title" id="errorModalLabel">WARNING</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" style="font-size: 1.25rem; text-align: center; padding: 2rem;">
-          <!-- Error message goes here -->
+          <i id="modalIcon" class="bi me-2"></i><span id="modalMessage"></span>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -118,33 +121,33 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label mb-0"><i class="bi bi-list-nested"></i> LOTS</label>
-                      <select class="form-select shadow-sm" id="lots" autofocus></select>
+                      <select class="form-select shadow-sm" id="lots" autofocus tabindex="1"></select>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label mb-0"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
-                      <input type="number" id="maxPoints" maxlength="3" class="form-control shadow-sm" placeholder="000" value="30" max="30" />
+                      <input type="number" id="maxPoints" maxlength="3" class="form-control shadow-sm" placeholder="000" value="30" max="40" tabindex="2"/>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR" min="12" max="40"/>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR" min="12" max="40" tabindex="3"/>
                     </div>
                     <div class="mb-3">
                       <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy Price</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy" placeholder="Enter first buy price"/>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy" placeholder="Enter first buy price" tabindex="4"/>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 1st Average Price</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg1" placeholder="Enter 1st average price"/>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg1" placeholder="Enter 1st average price" tabindex="5"/>
                     </div>
                     <div class="mb-3">
-                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price (optional)</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg2" placeholder="Enter 2nd average price"/>
+                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg2" placeholder="Enter 2nd average price" tabindex="6"/>
                     </div>
                   </div>
                 </div>
@@ -329,7 +332,27 @@
     }
 
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
+      if (event.key === 'Enter') {
+        const modalEl = document.getElementById('errorModal');
+        if (modalEl.classList.contains('show')) {
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          modal.hide();
+          event.preventDefault();
+        } else {
+          const target = event.target;
+          if (target.form && target.form.id === 'calcForm') {
+            event.preventDefault();
+            const currentTabindex = parseInt(target.getAttribute('tabindex'), 10);
+            const nextTabindex = currentTabindex + 1;
+            const nextElement = document.querySelector(`#calcForm [tabindex="${nextTabindex}"]`);
+            if (nextElement) {
+              nextElement.focus();
+            } else {
+              document.querySelector('#calcForm [tabindex="1"]').focus();
+            }
+          }
+        }
+      } else if (event.key === 'Escape') {
         document.getElementById('atr').value = '';
         document.getElementById('firstBuy').value = '';
         document.getElementById('avg1').value = '';
@@ -348,10 +371,14 @@
 
     let fieldToFocus = null;
 
-    function showModal(message, elementToFocus) {
+    function showModal(message, elementToFocus, iconClass = '') {
       const modalEl = document.getElementById('errorModal');
-      const modalBody = modalEl.querySelector('.modal-body');
-      modalBody.textContent = message;
+      const modalMessage = document.getElementById('modalMessage');
+      const modalIcon = document.getElementById('modalIcon');
+      
+      modalMessage.textContent = message;
+      modalIcon.className = `bi ${iconClass} me-2 ${iconClass ? 'big-icon' : ''}`;
+
       fieldToFocus = elementToFocus;
       const modal = new bootstrap.Modal(modalEl);
       modal.show();
@@ -374,7 +401,7 @@
         const max = parseFloat(this.max);
 
         if (this.value && (value < min || value > max)) {
-            showModal(`ATR value must be between ${min} and ${max}.`, this);
+            showModal(`ATR value must be between ${min} and ${max}.`, this, 'bi-exclamation-triangle-fill');
             this.value = 12;
             calculate();
         }
@@ -383,12 +410,25 @@
     const maxPointsInput = document.getElementById('maxPoints');
     maxPointsInput.addEventListener('change', function(event) {
         const value = parseFloat(this.value);
-        const max = parseFloat(this.max); // Max is 30
+        const max = parseFloat(this.max); // Max is 40
 
         if (this.value && value > max) {
-            showModal(`Max loss points value cannot exceed ${max}.`, this);
-            this.value = 30; // Reset to default of 30
+            showModal(`Max loss points value cannot exceed ${max}.`, this, 'bi-exclamation-triangle-fill');
+            this.value = 40; // Reset to default of 40
             calculate();
+        }
+    });
+
+    const avg1Input = document.getElementById('avg1');
+    avg1Input.addEventListener('change', function(event) {
+        const firstBuy = getValue('firstBuy');
+        const avg1 = getValue('avg1');
+        const atr = getValue('atr');
+
+        if (firstBuy !== null && avg1 !== null && atr !== null) {
+            if ((firstBuy - avg1) >= (atr * 1.5)) {
+                showModal(`The difference between First Buy and 1st Average should be below : ${(atr * 1.5).toFixed(2)}`, this, 'bi-exclamation-triangle-fill');
+            }
         }
     });
 
