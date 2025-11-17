@@ -107,6 +107,24 @@
       </div>
     </div>
   </div>
+  <div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="d-flex align-items-center p-2 border rounded shadow-sm bg-light" style="font-size: 0.9rem;">
+                <label for="capital" class="form-label mb-0 me-2"><i class="bi bi-cash text-success"></i> Capital</label>
+                <input type="number" id="capital" class="form-control form-control-sm me-3" style="width: 150px;" tabindex="-1">
+                <label for="mtm" class="form-label mb-0 me-2"><i class="bi bi-currency-exchange text-primary"></i> MTM</label>
+                <input type="number" id="mtm" class="form-control form-control-sm me-3" style="width: 150px;" tabindex="-1">
+                
+                <label class="form-label mb-0 me-2"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
+                <input type="number" id="maxPoints" maxlength="3" class="form-control form-control-sm me-3" placeholder="000" value="30" max="40" tabindex="-1" style="width: 80px;"/>
+                
+                <button id="resetCapitalMtm" class="btn btn-danger btn-sm">Reset</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <div class="container mt-3 mb-5">
     <div class="cards-container">
       <div class="card shadow-lg">
@@ -116,42 +134,44 @@
               <h3 class="text-center mb-3 text-danger">
                 <i class="bi bi-eye-fill"></i> Loss Visualizer
               </h3>
-              <form id="calcForm" autocomplete="off">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="form-label mb-0"><i class="bi bi-list-nested"></i> LOTS</label>
-                      <select class="form-select shadow-sm" id="lots" autofocus tabindex="1"></select>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="form-label mb-0"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
-                      <input type="number" id="maxPoints" maxlength="3" class="form-control shadow-sm" placeholder="000" value="30" max="40" tabindex="2"/>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR" min="12" max="40" tabindex="3"/>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy Price</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy" placeholder="Enter first buy price" tabindex="4"/>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 1st Average Price</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg1" placeholder="Enter 1st average price" tabindex="5"/>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price</label>
-                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg2" placeholder="Enter 2nd average price" tabindex="6"/>
-                    </div>
-                  </div>
-                </div>
-              </form>
+                            <form id="calcForm" autocomplete="off">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy Price</label>
+                                    <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy" placeholder="Enter first buy price" autofocus tabindex="1"/>
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="mb-3">
+                                    <label class="form-label mb-0"><i class="bi bi-list-nested"></i> LOTS</label>
+                                    <select class="form-select shadow-sm" id="lots" tabindex="2"></select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
+                                    <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR" min="12" max="40" tabindex="3"/>
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 1st Average Price</label>
+                                    <input type="number" step="0.01" class="form-control shadow-sm" id="avg1" placeholder="Enter 1st average price" tabindex="4"/>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price</label>
+                                    <input type="number" step="0.01" class="form-control shadow-sm" id="avg2" placeholder="Enter 2nd average price" tabindex="5"/>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
               <div class="mt-4">
 
               </div>
@@ -243,6 +263,9 @@
 
       // Profit MTM calculation
       const profitMtmLabel = document.getElementById("profitMtmLabel");
+      const mtmFromTop = getValue('mtm') || 0;
+      let profitMtm = 0; // Initialize trade MTM
+
       if (atr !== null && lots !== null) {
         let multiplier = 0;
         if (avg2 !== null && !isNaN(avg2)) multiplier = 3;
@@ -250,13 +273,16 @@
         else if (firstBuy !== null && !isNaN(firstBuy)) multiplier = 1;
 
         if (multiplier > 0) {
-          const profitMtm = (atr / 3) * lots * 20 * multiplier;
-          profitMtmLabel.textContent = `MTM Profit at: ₹ ${profitMtm.toFixed(2)}`;
-        } else {
-          profitMtmLabel.textContent = "MTM Profit at: ₹ --";
+          profitMtm = (atr / 3) * lots * 20 * multiplier;
         }
+      }
+
+      const totalMtm = profitMtm + mtmFromTop;
+
+      if (profitMtm !== 0 || mtmFromTop !== 0) { // Show if there's a calculated profit or a value in the MTM field
+          profitMtmLabel.textContent = `MTM Profit at: ₹ ${totalMtm.toFixed(2)}`;
       } else {
-        profitMtmLabel.textContent = "MTM Profit at: ₹ --";
+          profitMtmLabel.textContent = "MTM Profit at: ₹ --";
       }
 
       // Possible Loss calculation (updated)
@@ -294,6 +320,18 @@
         fundsRequiredLabel.innerHTML = `<i class="bi bi-wallet2"></i> Funds Required: ₹ ${fundsRequired.toFixed(2)}`;
       } else {
         fundsRequiredLabel.innerHTML = `<i class="bi bi-wallet2"></i> Funds Required: ₹ --`;
+      }
+
+      // Check against capital
+      const capital = getValue('capital');
+      if (capital !== null && fundsRequired > 0) {
+          const threshold = capital - (capital * 0.05);
+          if (fundsRequired > threshold) {
+              const modalEl = document.getElementById('errorModal');
+              if (!modalEl || !modalEl.classList.contains('show')) {
+                showModal("Trade value exceeds our Capital", document.getElementById('lots'), 'bi-exclamation-triangle-fill', 'error');
+              }
+          }
       }
 
       // Hidden Price Difference calculation
@@ -360,7 +398,7 @@
         document.getElementById('maxPoints').value = '30';
         document.getElementById('lots').value = '1';
         calculate();
-        document.getElementById('lots').focus();
+        document.getElementById('firstBuy').focus();
       }
     });
 
@@ -370,18 +408,42 @@
     lotsSelect.addEventListener("input", calculate);
 
     let fieldToFocus = null;
+    const modalQueue = []; // New global variable
 
-    function showModal(message, elementToFocus, iconClass = '') {
+    // New helper function to actually display the modal
+    function _displayModal(message, elementToFocus, iconClass, modalType) {
       const modalEl = document.getElementById('errorModal');
+      const modalHeader = modalEl.querySelector('.modal-header');
       const modalMessage = document.getElementById('modalMessage');
       const modalIcon = document.getElementById('modalIcon');
       
       modalMessage.textContent = message;
       modalIcon.className = `bi ${iconClass} me-2 ${iconClass ? 'big-icon' : ''}`;
 
+      if (modalType === 'error') {
+        modalHeader.style.backgroundColor = '#b71c1c';
+        modalHeader.style.color = 'white';
+      } else { // default to warning
+        modalHeader.style.backgroundColor = '#FFC107';
+        modalHeader.style.color = 'black';
+      }
+
       fieldToFocus = elementToFocus;
       const modal = new bootstrap.Modal(modalEl);
       modal.show();
+    }
+
+    function showModal(message, elementToFocus, iconClass = '', modalType = 'warning') {
+      const modalEl = document.getElementById('errorModal');
+      
+      // If a modal is already showing, queue this request
+      if (modalEl && modalEl.classList.contains('show')) {
+        modalQueue.push({ message, elementToFocus, iconClass, modalType });
+        return; // Do not show now
+      }
+
+      // Otherwise, show immediately
+      _displayModal(message, elementToFocus, iconClass, modalType);
     }
 
     const errorModal = document.getElementById('errorModal');
@@ -390,6 +452,12 @@
         if (fieldToFocus) {
           fieldToFocus.focus();
           fieldToFocus = null;
+        }
+
+        // Check if there are queued modals and show the next one
+        if (modalQueue.length > 0) {
+          const nextModal = modalQueue.shift(); // Get the first item and remove it
+          _displayModal(nextModal.message, nextModal.elementToFocus, nextModal.iconClass, nextModal.modalType);
         }
       });
     }
@@ -434,6 +502,31 @@
 
     window.onload = () => {
       lotsSelect.value = "1";
+
+      const capitalInput = document.getElementById('capital');
+      const mtmInput = document.getElementById('mtm');
+      const resetCapitalMtmBtn = document.getElementById('resetCapitalMtm');
+
+      // Load from storage
+      capitalInput.value = localStorage.getItem('capital') || '';
+      mtmInput.value = localStorage.getItem('mtm') || '';
+
+      // Save to storage on change
+      capitalInput.addEventListener('input', () => {
+          localStorage.setItem('capital', capitalInput.value);
+      });
+      mtmInput.addEventListener('input', () => {
+          localStorage.setItem('mtm', mtmInput.value);
+      });
+
+      // Reset button
+      resetCapitalMtmBtn.addEventListener('click', () => {
+          capitalInput.value = '';
+          mtmInput.value = '';
+          localStorage.removeItem('capital');
+          localStorage.removeItem('mtm');
+      });
+
       calculate();
     };
   </script>
