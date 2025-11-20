@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Loss Visualizer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/lux/bootstrap.min.css" rel="stylesheet" />
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-    rel="stylesheet"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
     body {
       background: #87ceeb;
       min-height: 100vh;
       transition: background 0.5s;
     }
+
     .bg-body-green {
       background: linear-gradient(135deg, #2e7d32 80%, #00e676 100%) !important;
     }
+
     .bg-body-orange {
       background: linear-gradient(135deg, #ffa726 80%, #ff9800 100%) !important;
     }
+
     .bg-body-red {
       background: linear-gradient(135deg, #b71c1c 80%, #c62828 100%) !important;
     }
+
     .card {
       border: none;
       border-radius: 15px;
@@ -31,13 +33,16 @@
       width: 100%;
       max-width: 900px;
     }
+
     .card-body {
       background: linear-gradient(145deg, #fff, #f8f9fa);
       border-radius: 15px;
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
     }
+
     .big-label {
-      font-size: 1.3rem; /* Reduced from 1.5rem */
+      font-size: 1.3rem;
+      /* Reduced from 1.5rem */
       font-weight: bold;
       border-radius: 12px;
       padding: 8px 16px;
@@ -47,8 +52,10 @@
       justify-content: center;
       gap: 10px;
       transition: background 0.3s;
-      min-height: 60px; /* Added for visibility */
+      min-height: 60px;
+      /* Added for visibility */
     }
+
     .small-label {
       font-size: 0.9rem;
       color: #333;
@@ -57,18 +64,25 @@
       padding: 2px 8px;
       margin-left: 8px;
     }
+
     .form-label {
       font-weight: bold;
       font-size: 1rem;
     }
-    .form-control:focus, .form-select:focus {
-      border-color: #FF8C00 !important; /* DarkOrange */
-      box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25) !important; /* Orange shadow */
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #FF8C00 !important;
+      /* DarkOrange */
+      box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25) !important;
+      /* Orange shadow */
     }
+
     .merged-loss-card {
       background: red;
       color: white;
-      font-size: 1.3rem; /* Reduced from 1.5rem */
+      font-size: 1.3rem;
+      /* Reduced from 1.5rem */
       font-weight: bold;
       border-radius: 12px;
       padding: 8px 16px;
@@ -76,19 +90,25 @@
       text-align: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
+
     .bg-light-yellow {
-      background: #FFA500 !important; /* Bright Orange */
+      background: #FFA500 !important;
+      /* Bright Orange */
       color: #6c6c07 !important;
     }
+
     .cards-container {
       display: flex;
       justify-content: center;
     }
+
     .big-icon {
-      font-size: 2.5rem; /* Adjust size as needed */
+      font-size: 2.5rem;
+      /* Adjust size as needed */
     }
   </style>
 </head>
+
 <body>
   <!-- Modal -->
   <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -109,19 +129,21 @@
   </div>
   <div class="container mt-3">
     <div class="row justify-content-center">
-        <div class="col-auto">
-            <div class="d-flex align-items-center p-2 border rounded shadow-sm bg-light" style="font-size: 0.9rem;">
-                <label for="capital" class="form-label mb-0 me-2"><i class="bi bi-cash text-success"></i> Capital</label>
-                <input type="number" id="capital" class="form-control form-control-sm me-3" style="width: 150px;" tabindex="-1">
-                <label for="mtm" class="form-label mb-0 me-2"><i class="bi bi-currency-exchange text-primary"></i> MTM</label>
-                <input type="number" id="mtm" class="form-control form-control-sm me-3" style="width: 150px;" tabindex="-1">
-                
-                <label class="form-label mb-0 me-2"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
-                <input type="number" id="maxPoints" maxlength="3" class="form-control form-control-sm me-3" placeholder="000" value="30" max="40" tabindex="-1" style="width: 80px;"/>
-                
-                <button id="resetCapitalMtm" class="btn btn-danger btn-sm">Reset</button>
-            </div>
+      <div class="col-auto">
+        <div class="d-flex align-items-center p-2 border rounded shadow-sm bg-light" style="font-size: 0.9rem;">
+          <label for="capital" class="form-label mb-0 me-2"><i class="bi bi-cash text-success"></i> Capital</label>
+          <input type="number" id="capital" class="form-control form-control-sm me-3" style="width: 150px;"
+            tabindex="-1">
+          <label for="mtm" class="form-label mb-0 me-2"><i class="bi bi-currency-exchange text-primary"></i> MTM</label>
+          <input type="number" id="mtm" class="form-control form-control-sm me-3" style="width: 150px;" tabindex="-1">
+
+          <label class="form-label mb-0 me-2"><i class="bi bi-bullseye text-danger"></i> Max loss points</label>
+          <input type="number" id="maxPoints" maxlength="3" class="form-control form-control-sm me-3" placeholder="000"
+            value="30" max="40" tabindex="-1" style="width: 80px;" />
+
+          <button id="resetCapitalMtm" class="btn btn-danger btn-sm">Reset</button>
         </div>
+      </div>
     </div>
   </div>
 
@@ -134,44 +156,49 @@
               <h3 class="text-center mb-3 text-danger">
                 <i class="bi bi-eye-fill"></i> Loss Visualizer
               </h3>
-                            <form id="calcForm" autocomplete="off">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy Price</label>
-                                    <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy" placeholder="Enter first buy price" autofocus tabindex="1"/>
-                                  </div>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="mb-3">
-                                    <label class="form-label mb-0"><i class="bi bi-list-nested"></i> LOTS</label>
-                                    <select class="form-select shadow-sm" id="lots" tabindex="2"></select>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
-                                    <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR" min="12" max="40" tabindex="3"/>
-                                  </div>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 1st Average Price</label>
-                                    <input type="number" step="0.01" class="form-control shadow-sm" id="avg1" placeholder="Enter 1st average price" tabindex="4"/>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price</label>
-                                    <input type="number" step="0.01" class="form-control shadow-sm" id="avg2" placeholder="Enter 2nd average price" tabindex="5"/>
-                                  </div>
-                                </div>
-                              </div>
-                            </form>
+              <form id="calcForm" autocomplete="off">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-graph-up-arrow text-success"></i> First Buy
+                        Price</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="firstBuy"
+                        placeholder="Enter first buy price" autofocus tabindex="1" />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label mb-0"><i class="bi bi-list-nested"></i> LOTS</label>
+                      <select class="form-select shadow-sm" id="lots" tabindex="2"></select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-lightning-charge text-warning"></i> ATR</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="atr" placeholder="Enter ATR"
+                        min="12" max="40" tabindex="3" />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 1st Average Price</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg1"
+                        placeholder="Enter 1st average price" tabindex="4" />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label"><i class="bi bi-arrow-down-up text-info"></i> 2nd Average Price</label>
+                      <input type="number" step="0.01" class="form-control shadow-sm" id="avg2"
+                        placeholder="Enter 2nd average price" tabindex="5" />
+                    </div>
+                  </div>
+                </div>
+              </form>
               <div class="mt-4">
 
               </div>
@@ -280,9 +307,9 @@
       const totalMtm = profitMtm + mtmFromTop;
 
       if (profitMtm !== 0 || mtmFromTop !== 0) { // Show if there's a calculated profit or a value in the MTM field
-          profitMtmLabel.textContent = `MTM Profit at: ₹ ${totalMtm.toFixed(2)}`;
+        profitMtmLabel.textContent = `MTM Profit at: ₹ ${totalMtm.toFixed(2)}`;
       } else {
-          profitMtmLabel.textContent = "MTM Profit at: ₹ --";
+        profitMtmLabel.textContent = "MTM Profit at: ₹ --";
       }
 
       // Possible Loss calculation (updated)
@@ -295,7 +322,8 @@
 
         if (multiplier > 0) {
           const possibleLoss = lots * 20 * maxPoints * multiplier;
-          possibleLossLabel.textContent = `MTM Loss at: ₹ ${possibleLoss.toFixed(2)}`;
+          const totalLossMtm = mtmFromTop - possibleLoss;
+          possibleLossLabel.textContent = `MTM Loss at: ₹ ${totalLossMtm.toFixed(2)}`;
         } else {
           possibleLossLabel.textContent = "MTM Loss at: ₹ --";
         }
@@ -325,13 +353,13 @@
       // Check against capital
       const capital = getValue('capital');
       if (capital !== null && fundsRequired > 0) {
-          const threshold = capital - (capital * 0.05);
-          if (fundsRequired > threshold) {
-              const modalEl = document.getElementById('errorModal');
-              if (!modalEl || !modalEl.classList.contains('show')) {
-                showModal("Trade value exceeds our Capital", document.getElementById('lots'), 'bi-exclamation-triangle-fill', 'error');
-              }
+        const threshold = capital - (capital * 0.05);
+        if (fundsRequired > threshold) {
+          const modalEl = document.getElementById('errorModal');
+          if (!modalEl || !modalEl.classList.contains('show')) {
+            showModal("Trade value exceeds our Capital", document.getElementById('lots'), 'bi-exclamation-triangle-fill', 'error');
           }
+        }
       }
 
       // Hidden Price Difference calculation
@@ -369,7 +397,7 @@
         body.classList.add("bg-body-orange");
     }
 
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') {
         const modalEl = document.getElementById('errorModal');
         if (modalEl.classList.contains('show')) {
@@ -402,7 +430,7 @@
       }
     });
 
-    ["atr", "firstBuy", "avg1", "avg2", "maxPoints"].forEach(id =>
+    ["atr", "firstBuy", "avg1", "avg2", "maxPoints", "mtm"].forEach(id =>
       document.getElementById(id).addEventListener("input", calculate)
     );
     lotsSelect.addEventListener("input", calculate);
@@ -416,7 +444,7 @@
       const modalHeader = modalEl.querySelector('.modal-header');
       const modalMessage = document.getElementById('modalMessage');
       const modalIcon = document.getElementById('modalIcon');
-      
+
       modalMessage.textContent = message;
       modalIcon.className = `bi ${iconClass} me-2 ${iconClass ? 'big-icon' : ''}`;
 
@@ -435,7 +463,7 @@
 
     function showModal(message, elementToFocus, iconClass = '', modalType = 'warning') {
       const modalEl = document.getElementById('errorModal');
-      
+
       // If a modal is already showing, queue this request
       if (modalEl && modalEl.classList.contains('show')) {
         modalQueue.push({ message, elementToFocus, iconClass, modalType });
@@ -463,41 +491,41 @@
     }
 
     const atrInput = document.getElementById('atr');
-    atrInput.addEventListener('change', function(event) {
-        const value = parseFloat(this.value);
-        const min = parseFloat(this.min);
-        const max = parseFloat(this.max);
+    atrInput.addEventListener('change', function (event) {
+      const value = parseFloat(this.value);
+      const min = parseFloat(this.min);
+      const max = parseFloat(this.max);
 
-        if (this.value && (value < min || value > max)) {
-            showModal(`ATR value must be between ${min} and ${max}.`, this, 'bi-exclamation-triangle-fill');
-            this.value = 12;
-            calculate();
-        }
+      if (this.value && (value < min || value > max)) {
+        showModal(`ATR value must be between ${min} and ${max}.`, this, 'bi-exclamation-triangle-fill');
+        this.value = 12;
+        calculate();
+      }
     });
 
     const maxPointsInput = document.getElementById('maxPoints');
-    maxPointsInput.addEventListener('change', function(event) {
-        const value = parseFloat(this.value);
-        const max = parseFloat(this.max); // Max is 40
+    maxPointsInput.addEventListener('change', function (event) {
+      const value = parseFloat(this.value);
+      const max = parseFloat(this.max); // Max is 40
 
-        if (this.value && value > max) {
-            showModal(`Max loss points value cannot exceed ${max}.`, this, 'bi-exclamation-triangle-fill');
-            this.value = 40; // Reset to default of 40
-            calculate();
-        }
+      if (this.value && value > max) {
+        showModal(`Max loss points value cannot exceed ${max}.`, this, 'bi-exclamation-triangle-fill');
+        this.value = 40; // Reset to default of 40
+        calculate();
+      }
     });
 
     const avg1Input = document.getElementById('avg1');
-    avg1Input.addEventListener('change', function(event) {
-        const firstBuy = getValue('firstBuy');
-        const avg1 = getValue('avg1');
-        const atr = getValue('atr');
+    avg1Input.addEventListener('change', function (event) {
+      const firstBuy = getValue('firstBuy');
+      const avg1 = getValue('avg1');
+      const atr = getValue('atr');
 
-        if (firstBuy !== null && avg1 !== null && atr !== null) {
-            if ((firstBuy - avg1) >= (atr * 1.5)) {
-                showModal(`The difference between First Buy and 1st Average should be below : ${(atr * 1.5).toFixed(2)}`, this, 'bi-exclamation-triangle-fill');
-            }
+      if (firstBuy !== null && avg1 !== null && atr !== null) {
+        if ((firstBuy - avg1) >= (atr * 1.5)) {
+          showModal(`The difference between First Buy and 1st Average should be below : ${(atr * 1.5).toFixed(2)}`, this, 'bi-exclamation-triangle-fill');
         }
+      }
     });
 
     window.onload = () => {
@@ -513,22 +541,23 @@
 
       // Save to storage on change
       capitalInput.addEventListener('input', () => {
-          localStorage.setItem('capital', capitalInput.value);
+        localStorage.setItem('capital', capitalInput.value);
       });
       mtmInput.addEventListener('input', () => {
-          localStorage.setItem('mtm', mtmInput.value);
+        localStorage.setItem('mtm', mtmInput.value);
       });
 
       // Reset button
       resetCapitalMtmBtn.addEventListener('click', () => {
-          capitalInput.value = '';
-          mtmInput.value = '';
-          localStorage.removeItem('capital');
-          localStorage.removeItem('mtm');
+        capitalInput.value = '';
+        mtmInput.value = '';
+        localStorage.removeItem('capital');
+        localStorage.removeItem('mtm');
       });
 
       calculate();
     };
   </script>
 </body>
+
 </html>
